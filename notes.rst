@@ -1,6 +1,12 @@
 Fish and chips and Apache Kafka®
 ================================
 
+    The shorter
+
+    * Fish and Chips and Kafka
+
+    is catchier, but it's probably better to be polite and name the product properly...
+
 .. contents::
 
 Target
@@ -8,21 +14,6 @@ Target
 
 * PyCon UK 2022
 
-PyCon UK specifics
-------------------
-
-https://2022.pyconuk.org/call-for-proposals/proposal-submission-advice/
-
-Title
-~~~~~
-
-* Fish and Chips and Apache Kafka®
-
-The shorter
-
-* Fish and Chips and Kafka
-
-is catchier, but it's probably better to be polite and name the product properly...
 
 Abstract
 ~~~~~~~~
