@@ -17,6 +17,9 @@ possible.
 .. _`PyCon UK 2022`: https://2022.pyconuk.org/
 .. _CamPUG: https://www.meetup.com/CamPUG/
 
+Apache Kafka
+is either a registered trademark or a trademarks of the Apache Software Foundation in the United States and/or other countries
+
 Links mentioned in the slides
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
