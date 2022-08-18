@@ -1,5 +1,81 @@
-Actors and events
-=================
+=====================================
+Actors and events, thoughts and plans
+=====================================
+
+Bedtime thoughts (2022-08-17)
+=============================
+
+* We're assuming some sort of service (a microservice) for each stage of the
+  buying fish and chips process.
+
+  We need to communicate between those.
+
+  I've seen people try to use a database for "messaging" like this, but it's
+  not really fit for purpose (although it's tempting, because it does look a
+  little bit like putting bits of paper up on a line or a board to be
+  attended to). Steal some of the objections from Francesco. But basically,
+  we don't want to try to implement messaging on top of
+
+* An order for cod and chips arrives
+
+  We assume (at least at first) that there is always plenty of cod and chips
+  available - these are refreshed asynchronously as needed (this is *nearly*
+  how I've experienced Real Life - occasionally in a small shop one has to
+  wait for new chips, for instance)
+
+  The order is sent to the preparer, who makes up the fish and chips, and
+  sends the order on to the next stage.
+
+* If we're very busy, there might be multiple tills, and multiple preparers
+  (and even multiple whatever the next stage is). Show some of this
+  happening with Kafka.
+
+* An order that includes plaice arrives at the till.
+
+  The cache (Redis) shows there is no plaice ready (this is the norm)
+
+  Because of that, the order is sent to the cook (behind the frying machine)
+
+  When the plaice is ready, the number of plaice available will be updated
+  in the cache, and the original message will be sent to the preparer. From
+  there onwards, it's a normal order.
+
+* I don't think we need to worry about race conditions, but if the
+  preparer *does* notice that there is insufficient plaice, they should just
+  send the order back to the cook again...
+
+* The accountant will also want to listen to the same orders as the
+  preparer, so they can work out income
+
+* The statistician will also want to listen to the same orders, so they can
+  understand something about what to order in the future, according to past
+  sales. They may actually (instead) want the data to go into OpenSearch so
+  they can do statistics on it. They might also want to count the total
+  number of messages sent to the till versus the total sent to the
+  preparer - this will given an idea of how many times an order had to wait
+  for something to be cooked.
+
+* We could generalise the cache concept to cod and chips (or portions of
+  chips, anyway) as well - this may not be worth doing as it should be
+  "obvious"
+
+* An interesting program would have switches to set the numbers of the
+  different participants (tills, producers, cooks, etc.) and some way of
+  choosing the proportion of plaice orders (and how often N is greater than
+  1 instead of just 1), and then generate random orders, throw them at the
+  system, and visualise the result.
+
+* We'd also want a script to create the relevant Aiven services, and to tear
+  them down again, to make the demo easier to use.
+
+* I'd quite like to do it as a command line UI, just because - maybe using
+
+  * https://github.com/Textualize/textual
+  * https://github.com/Textualize/rich
+  * and maybe https://github.com/Textualize/rich-cli
+
+Earlier thoughts
+================
 
 Menu: cod, plaice, chips, maybe pie. Size is an optional extra, but doesn't
 affect anything. We assume that cod and chips (and pie if offered) are always
