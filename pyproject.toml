@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "fish-and-chips-and-kafka-talk"
+version = "0.1.0"
+description = "A talk for Pycon UK 2022"
+authors = ["Tony Ibbs (Tibs) <tony.ibbs@aiven.io>"]
+license = "Creative Commons Attribution-ShareAlike 4.0 International License"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+rst2pdf = "^0.99"
+Pygments = "^2.12.0"
+docutils = "^0.19"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

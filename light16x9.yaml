@@ -1,0 +1,96 @@
+pageSetup:
+    size: null
+    width: 16cm
+    height: 9cm
+    margin-top: 0cm
+    margin-bottom: 0cm
+    margin-left: 0cm
+    margin-right: 0cm
+    margin-gutter: 0cm
+    spacing-header: 2mm
+    spacing-footer: 2mm
+    firstTemplate: standardPage
+
+# Frames are [ left, bottom, width, height ]
+pageTemplates:
+    standardPage:
+        frames:
+        - - 3%
+          - 3%
+          - 94%
+          - 94%
+        background: images/white.jpg
+        showHeader: false
+        showFooter: true
+
+    twoColumnNarrowRight:
+        frames:
+        - - 3%
+          - 3%
+          - 69%
+          - 94%
+        - - 71%
+          - 3%
+          - 26%
+          - 94%
+
+linkColor: "#1b7b88"
+
+styles:
+    normal:
+        fontSize: 12
+
+    bodytext:
+        alignment: TA_LEFT
+        hyphenation: false
+        spaceAfter: 10
+
+    # Use a bit less space after the title, so it's not so far from the following info
+    # This may be more important for this slide deck as the title is so long
+    title:
+      alignment: TA_CENTER
+      fontSize: 200%
+      keepWithNext: false
+      parent: heading
+      spaceAfter: 20
+
+    title-slide-info:
+        parent: normal
+        alignment: TA_CENTER
+
+    # I want a bit more vertical space after the slide heading
+    # (the default is 6)
+    heading1:
+        fontSize: 175%
+        parent: heading
+        spaceAfter: 12
+
+    literal:
+        textColor: "#000000"
+
+    code:
+        parent: literal
+        fontSize: 8
+        leftIndent: 0
+        spaceBefore: 8
+        spaceAfter: 8
+
+    bullet-list:
+        parent: bodytext
+        spaceBefore: 0
+
+    # List items need a bit more spacing than the default style
+    # to stop them looking cramped together
+    bullet-list-item:
+        parent: bodytext
+        spaceBefore: 12
+
+    item-list:
+        parent: bodytext
+        spaceBefore: 0
+
+    # List items need a bit more spacing than the default style
+    # to stop them looking cramped together
+    item-list-item:
+        parent: bodytext
+        spaceBefore: 12
