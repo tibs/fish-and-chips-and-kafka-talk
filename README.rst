@@ -27,8 +27,6 @@ For your convenience, these are the links mentioned in the slides:
 
 * Aiven_, where I work, and our developer documentation at
   https://docs.aiven.io/ and https://github.com/aiven/devportal
-  (The talk video uses the older https://developer.aiven.io/ - the change to
-  ``docs`` was made just after I'd recorded it. The old URL will continue to work.)
 * ... to be continued ...
 
 .. _Aiven: https://aiven.io/
