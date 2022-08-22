@@ -2,6 +2,100 @@
 Actors and events, thoughts and plans
 =====================================
 
+Outline (more bedtime thoughts, 2022-08-22)
+===========================================
+
+Talk about what we're trying to do - use a fish and chip shop as a relatively
+simple example of micro-service communication.
+
+Things not to do:
+
+* Try to use a database as a messaging service (explain briefly why not -
+  mainly it means you have to *implement* all of a queuing system, over
+  something that is designed for different purposes / constraints)
+* Use traditional messaging solutions (explain briefly why not - back pressure
+  handling, problems if queue crashes and resuming, guaranteed delivery, etc.)
+
+So we're going to look at how Apache Kafka is the solution to our problems
+<fx: smile>
+
+It *might* be sensible to put the "First things to simulate" section
+before the "Things not to do" part - think on it.
+
+First things to simulate:
+
+* Start with an "order, make up order, vend order" setup. We assume there are
+  always enough cod and chips ready to satisfy orders (someone in the background
+  keeps them stocked)
+
+  * Customer makes order at till and pays for it
+  * Order is sent to preparer, who makes up the order and gives it to the customer
+
+  Show:
+
+  * Order information also goes to accountant records
+  * Order information also goes to opensearch (for instance) for later analysis
+
+Consider that there are more and more orders, so first show adding multiple
+preparers (automatic scaling), then multiple tills (multiple producers)
+
+What about plaice? (I like plaice)
+
+Plaice is cooked seperately, because it's unusual, so not worth keeping in the
+hot cabinet.
+
+* Add in orders with plaice being sectioned off to a particular preparer
+
+Then talk briefly about how we can simulate the "stuff needs cooking", using
+Redis - see `Bedtime thoughts (2022-08-17)`_ for my original thoughts on this.
+
+Broadly:
+
+* Redis represents the central console between the preparers and the cooks.
+* It records how many portions of cod, chips and plaice are already prepared
+  (in the hot cabinet / below in the chip basket).
+
+  We shall ignore portion sizes, but if we did not, then (for instance) chip
+  portions might be simple multipliers on the "single" portion size, and
+  different cod sizes would count as different order items.
+
+* The preparer receives an order and looks to the Redis cache to see if there
+  are enough portions to satisfy it.
+
+  * If so, then make up the order, reduce the cache values, send on to the
+    customer. Note that we ideally want atomicity here - we don't want to
+    check the numbers and then make the order up, only to find the numbers
+    have changed in between.
+
+  * If not, then send the order on to the cook, who will cook what is needed:
+
+    * For cod and chips, round the "prepared" quantities up to some standard
+      amount that is greater than that needed.
+    * For plaice, prepare the requested number.
+
+    When the cache has been updated, send the order back to the preparer.
+
+    Again, think about atomicity. But don't aim for perfection - I don't mind
+    if I miss something and get it a bit wrong, since this is "playing", not a
+    production system. Might even be worth pointing that out.
+
+  Does this mean the preparer has two queues, one from the till and one from
+  the cook? If not, need to have some way to stop the accountant, etc., from
+  noticing / taking account of the second time round.
+
+    (Is that just something I can do with Kafka - have the preparer listen to
+    two merged even queues?)
+
+  *If* there was a race condition between preparers and stuff being ready,
+  the preparer would presumably just send the "cook stuff for me" message
+  again.
+
+So by the end, we've shown some interesting use cases of Kafka for event
+queues, including multiple producers and consumers, and output to OpenSearch.
+We've also introduced the use of a Redis cache, just for the fun of it.
+
+And we've reminded people not to try to re-implement queues using a database.
+
 Bedtime thoughts (2022-08-17)
 =============================
 
