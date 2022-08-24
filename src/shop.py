@@ -3,6 +3,10 @@
 """shop.py - the demonstration for my talk "Fish and Chips and Apache Kafka®"
 """
 
+# Thanks to the article at
+# https://stackoverflow.com/questions/71631247/textual-python-tui-enabling-long-running-external-asyncio-functionality
+# for some ideas
+
 import asyncio
 import click
 
@@ -69,9 +73,27 @@ class MyGridApp(App):
 
         grid.place(
             area1=Clock(),
-            area2=LineWidget(),
+            area2=OtherWidget(),
             area3=LineWidget(),
         )
+
+
+class OtherWidget(Widget):
+
+    counter = 0
+
+    async def background_task(self):
+        while True:
+            await asyncio.sleep(0.5)
+            self.counter += 1
+            self.refresh()
+            self.app.refresh()
+
+    async def on_mount(self):
+        asyncio.create_task(self.background_task())
+
+    def render(self):
+        return Panel(f'Other counter {self.counter}')
 
 
 @click.command(no_args_is_help=True)

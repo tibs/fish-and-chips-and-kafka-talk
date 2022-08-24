@@ -40,6 +40,10 @@ Kafka.
   testing, which means I can probably write an app without needing to actually
   connect to Kafka in the early stages, which would be nice.
 
+  **But** it's really intended for consumers, I think, and also I should
+  probably limit the number of "new things" I introduce, especially as I'm not
+  doing anything very complicated with my Kafka setup.
+
 .. _click: https://github.com/pallets/click/
 .. _`click docs`: https://click.palletsprojects.com/en/8.1.x/
 .. _textual: https://github.com/Textualize/textual
