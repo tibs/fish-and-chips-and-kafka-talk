@@ -10,6 +10,8 @@
 import asyncio
 import click
 
+from collections import deque
+
 from datetime import datetime
 
 from rich.align import Align
@@ -19,6 +21,9 @@ from textual import events
 from textual.app import App
 from textual.widget import Widget
 from textual.widgets import Header, Footer, Placeholder, ScrollView
+
+
+TOPIC_NAME = 'fish-and-chips'
 
 
 class Clock(Widget):
@@ -80,27 +85,44 @@ class MyGridApp(App):
 
 class OtherWidget(Widget):
 
-    counter = 0
+    MAX_LINES = 30
+
+    count = 0
+    lines = deque(maxlen=MAX_LINES)
 
     async def background_task(self):
         while True:
             await asyncio.sleep(0.5)
-            self.counter += 1
+            self.count += 1
+            self.lines.append(f'Other counter {self.count}')
             self.refresh()
             self.app.refresh()
 
     async def on_mount(self):
         asyncio.create_task(self.background_task())
 
+    def make_text(self, height):
+        lines = ['TOP'] + list(self.lines) + [f'BOTTOM height={height}']
+        # The value of 2 seems unnecessarily magical
+        # I assume it's the widget height - the panel border
+        return '\n'.join(lines[-(height-2):])
+
     def render(self):
-        return Panel(f'Other counter {self.counter}')
+        text = self.make_text(self.size.height)
+        return Panel(text)
 
 
 @click.command(no_args_is_help=True)
-@click.option('--go', required=True, is_flag=True, expose_value=False, help="Say --go to make the app run")
-def main():
+#@click.option('--go', required=True, is_flag=True, expose_value=False, help="Say --go to make the app run")
+##@click.argument('kafka_uri', required=True, help='Kafka service URI, as HOST:SSL_PORT')
+@click.argument('kafka_uri', required=True)
+@click.option('-d', '--certs-dir', default='creds',
+              help='directory containing the ca.pem, service.cert and service.key files')
+def main(kafka_uri, certs_dir):
     """A fish and chip shop demo, using Apache Kafka®
     """
+
+    print(f'Kafka URI {kafka_uri}, certs dir {certs_dir}')
 
     MyGridApp.run(title="Simple App", log="textual.log")
 
