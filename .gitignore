@@ -1,0 +1,2 @@
+# Ignore any diagnostic logs output by Textual (and the `shop` program)
+src/textual.log

@@ -2,6 +2,50 @@
 Actors and events, thoughts and plans
 =====================================
 
+The demo
+========
+
+Click_ for the command line (`click docs`_) - I think Laysa has convinced me
+that this is a really good option, and it even looks as if it might handle
+help text in a way I can appreciate.
+
+Ideally, Textual_ or something similar to give me a terminal-based UI -
+Textual leverages Rich_ which is rather wonderful. The only snag with using
+Textual is that the documentation is a bit sparse.
+
+  OK. MessagePump provides ``set_interval`` which can call a method every
+  ``float`` seconds. Widget inherits this. `The example`__ shows using::
+
+      class Clock(Widget):
+          def on_mount(self):
+              self.set_interval(1, self.refresh)
+
+  to automatically call ``self.refresh`` every 1.0 seconds. So if I always
+  keep N records from the input source, then I should be able to show the (at
+  most N) latest records, and allow the Widget to handle resizing for me.
+
+  Populating those N latest records can be done by polling in ``refresh``, or
+  by asynchronously updating them, depending on which is easier.
+
+  __ https://github.com/Textualize/textual/tree/css#timers-and-intervals
+
+Ben points out that faust_ is *very nice* for acting as a streaming
+intermediary between Kafka and (for instance) Textual, and at first glance it
+looks as if it gives me just the sort of interfaces I want for talking to
+Kafka.
+
+  Ooh - it has a Redis extension - I wonder if that's going to be useful.
+
+  And https://faust.readthedocs.io/en/latest/userguide/testing.html describes
+  testing, which means I can probably write an app without needing to actually
+  connect to Kafka in the early stages, which would be nice.
+
+.. _click: https://github.com/pallets/click/
+.. _`click docs`: https://click.palletsprojects.com/en/8.1.x/
+.. _textual: https://github.com/Textualize/textual
+.. _rich: https://github.com/Textualize/rich
+.. _faust: https://faust.readthedocs.io/en/latest/
+
 Outline (more bedtime thoughts, 2022-08-22)
 ===========================================
 
@@ -95,6 +139,15 @@ queues, including multiple producers and consumers, and output to OpenSearch.
 We've also introduced the use of a Redis cache, just for the fun of it.
 
 And we've reminded people not to try to re-implement queues using a database.
+
+Code: I don't want to do a live demo, but I think it's important to show
+output from a demo. So provide code (on github) that automates the various
+things I want to show.
+
+* Several "simulation" choices (to match each stage of the talk)
+* Common "generate orders" phase
+* Other common components
+* Visualisation by some means - maybe terminal UI
 
 Bedtime thoughts (2022-08-17)
 =============================
