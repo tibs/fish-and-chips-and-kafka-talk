@@ -9,6 +9,7 @@ import click
 from datetime import datetime
 
 from rich.align import Align
+from rich.panel import Panel
 
 from textual import events
 from textual.app import App
@@ -25,17 +26,24 @@ class Clock(Widget):
         return Align.center(time, vertical="middle")
 
 
-class MyWidget(Widget):
+class LineWidget(Widget):
 
     counter = 0
 
     def on_mount(self):
-        self.set_interval(1, self.refresh)
+        self.set_interval(0.5, self.refresh)
+
+    def make_text(self, height):
+        lines = [f'{self.counter + n}' for n in range(30)]
+        lines = ['TOP'] + lines + [f'BOTTOM height={height}']
+        # The value of 2 seems unnecessarily magical
+        # I assume it's the widget height - the panel border
+        return '\n'.join(lines[-(height-2):])
 
     def render(self):
-        text = f'{self.counter}\n{self.counter+1}\n{self.counter+2}\n{self.counter+3}'
+        text = self.make_text(self.size.height)
         self.counter += 1
-        return Align.left(text, vertical='middle')
+        return Panel(text)
 
 
 class MyGridApp(App):
@@ -51,15 +59,18 @@ class MyGridApp(App):
         grid.add_column('right', fraction=1, min_size=20)
 
         grid.add_row('top', fraction=1)
+        grid.add_row('bottom')
 
         grid.add_areas(
             area1='left,top',
             area2='right,top',
+            area3='left-start|right-end,bottom',
         )
 
         grid.place(
             area1=Clock(),
-            area2=MyWidget(),
+            area2=LineWidget(),
+            area3=LineWidget(),
         )
 
 
