@@ -1,2 +1,8 @@
 # Ignore any diagnostic logs output by Textual (and the `shop` program)
 src/textual.log
+
+# Artefacts while I'm writing the demo
+src/cheat.txt
+src/creds/
+src/creds/*.cert
+src/creds/*.pem
