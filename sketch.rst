@@ -2,6 +2,31 @@
 Actors and events, thoughts and plans
 =====================================
 
+Latest thoughts (things get older as you go down the file)
+==========================================================
+
+1. The redis cache idea is nice, but there's probably not going to be time to
+   do more than mention the possibility in the talk. That doesn't mean I can't
+   have a demo of it for people to look at afterwards.
+
+2. Faust is indeed nice, but I'm going to use AIOKafka for async because it's
+   essentially python-kafka done as async, and thus more familiar (in some
+   sense) and also has Producer and Consumer.
+
+3. Can use *queue number* to distinguish customers - this seems a natural way
+   to partition them (thanks to Francesco for this)
+
+4. Cook == new topic (terminology)
+
+5. Don't forget to mention *at the start of the talk* that we have multiple
+   destinations for the data - accountant, etc. (money earnt, consumables
+   used, statistics on order contents, etc. - that's already 3)
+
+6. Multiple concurrent consumers = partition message loop to cook
+
+7. At end, mention that Kafka Connect can make it easier to talk to
+   Redis/OpenSearch etc. without needing to write Python code.
+
 The demo
 ========
 
@@ -61,8 +86,10 @@ Things not to do:
 * Try to use a database as a messaging service (explain briefly why not -
   mainly it means you have to *implement* all of a queuing system, over
   something that is designed for different purposes / constraints)
-* Use traditional messaging solutions (explain briefly why not - back pressure
-  handling, problems if queue crashes and resuming, guaranteed delivery, etc.)
+* Use traditional messaging solutions (explain briefly why not - multiple
+  producers *and* multiple consumers, only sending some messages to some
+  consumers (not duplicating when scaling), back pressure handling, problems
+  if queue crashes and resuming, guaranteed delivery, etc.)
 
 So we're going to look at how Apache Kafka is the solution to our problems
 <fx: smile>
