@@ -56,12 +56,20 @@ are trademarks and property of their respective owners.
 Fin
 ---
 
-Slides and accompanying material at https://github.com/tibs/fish-and-chips-and-kafka-talk
+Get a free trial of Aiven services at
+https://console.aiven.io/signup/email
+
+Also, we're hiring! See https://aiven.io/careers
 
 Written in reStructuredText_, converted to PDF using rst2pdf_
 
-|cc-attr-sharealike| This slideshow is released under a
-`Creative Commons Attribution-ShareAlike 4.0 International License`_
+..
+    |cc-attr-sharealike| This slideshow is released under a
+    `Creative Commons Attribution-ShareAlike 4.0 International License`_
+
+Slides and accompanying material
+|cc-attr-sharealike|
+at https://github.com/tibs/fish-and-chips-and-kafka-talk
 
 .. image:: images/qr_fish_chips_kafka.png
     :align: right

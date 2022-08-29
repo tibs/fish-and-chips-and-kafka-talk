@@ -27,6 +27,8 @@ For your convenience, these are the links mentioned in the slides:
 
 * Aiven_, where I work, and our developer documentation at
   https://docs.aiven.io/ and https://github.com/aiven/devportal
+* Get a free trial of Aiven services at https://console.aiven.io/signup/email
+* Aiven is hiring. See https://aiven.io/careers
 * ... to be continued ...
 
 .. _Aiven: https://aiven.io/
@@ -55,11 +57,17 @@ for qrencode_, which I installed with ``brew install qrencode`` on my Mac.
 
 .. _qrencode: https://fukuchi.org/works/qrencode/
 
+The demo
+~~~~~~~~
+
+The source code for the demonstration program is in the `src`_ directory. See
+the `readme.rst <src/readme.rst>`_ for how to run it.
+
 The slide notes
 ~~~~~~~~~~~~~~~
 
-There are also notes for the slides. The intent is that these are readable
-as a stand-alone document - we'll see how that goes...
+There are also notes for the slides. They were part of my process in producing
+the slides, so may not be a great deal of use to others.
 
   (The notes may continue to change until after `PyCon UK 2022`_.)
 

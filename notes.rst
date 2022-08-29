@@ -52,42 +52,63 @@ start consuming events from the past, and more.
 Actual notes
 ============
 
+.. note:: Do I start with `What I want from messaging`_, and then do `Fish and
+          chip shop`_, or do I reverse the order?
 
 Something about our general purpose
 -----------------------------------
 
-..
-   Description from the proposal:
+Description from the proposal:
 
-   Handling large numbers of events is an increasing challenge in our cloud
-   centric world. For instance, in the IoT (Internet of Things) industry, devices
-   are all busy announcing their current state, which we want to
-   manage and report on, and meanwhile we want to send firmware and other updates
-   *back* to specific groups of devices.
+Handling large numbers of events is an increasing challenge in our cloud
+centric world. For instance, in the IoT (Internet of Things) industry, devices
+are all busy announcing their current state, which we want to
+manage and report on, and meanwhile we want to send firmware and other updates
+*back* to specific groups of devices.
 
-   Traditional messaging solutions don't scale well for this type of problem. We
-   want to guarantee not to lose events, to handle high volumes in a timely
-   manner, and to be able to distribute message reception or production across
-   multiple consumers or producers (compare to sharding for database reads).
+Traditional messaging solutions don't scale well for this type of problem. We
+want to guarantee not to lose events, to handle high volumes in a timely
+manner, and to be able to distribute message reception or production across
+multiple consumers or producers (compare to sharding for database reads).
 
-   As it turns out, there is a good solution available: Apache Kafka® - it
-   provides all the capabilities we are looking for.
+As it turns out, there is a good solution available: Apache Kafka® - it
+provides all the capabilities we are looking for.
 
-   In this talk, rather than considering some imaginary IoT scenario, I'm going
-   to look at how one might use Kafka to model the events required to run a fish
-   and chip shop: ordering (plaice and chips for me, please), food preparation,
-   accounting and so on.
+In this talk, rather than considering some imaginary IoT scenario, I'm going
+to look at how one might use Kafka to model the events required to run a fish
+and chip shop: ordering (plaice and chips for me, please), food preparation,
+accounting and so on.
 
-   I'll demonstrate handling of multiple producers and consumers, automatic routing of
-   events as new consumers are added, persistence, which allows a new consumer to
-   start consuming events from the past, and more.
+I'll demonstrate handling of multiple producers and consumers, automatic routing of
+events as new consumers are added, persistence, which allows a new consumer to
+start consuming events from the past, and more.
 
-Decisions
----------
+What I want from messaging
+--------------------------
 
-*Start with "what we want to model"*
+I want:
 
-*or start with "what I want from messaging"*
+* multiple producers *and* multiple consumers
+* only sending some messages to some consumers (not duplicating when scaling)
+* no need for back pressure handling (queue filling up)
+* no problems if queue crashes and resuming
+* guaranteed delivery
+* ... what else?
+
+Why not to build it around a database
+-------------------------------------
+
+mainly it means you have to *implement* all of a queuing system, over
+something that is designed for different purposes / constraints
+
+Brief explanation of Kafka
+--------------------------
+
+Producers, Consumers
+
+Events, topics, partitions
+
+
 
 Fish and chip shop
 ------------------
@@ -152,34 +173,6 @@ Participants: 2
   using OpenSearch, or might be using a database.
 
 *All these names could be improved*
-
-What I want from messaging
---------------------------
-
-Why not traditional message solutions
--------------------------------------
-
-I want:
-
-* multiple producers *and* multiple consumers
-* only sending some messages to some consumers (not duplicating when scaling)
-* no need for back pressure handling (queue filling up)
-* no problems if queue crashes and resuming
-* guaranteed delivery
-* ... what else?
-
-Why not to build it around a database
--------------------------------------
-
-mainly it means you have to *implement* all of a queuing system, over
-something that is designed for different purposes / constraints
-
-Brief explanation of Kafka
---------------------------
-
-Producers, Consumers
-
-Events, topics, partitions
 
 ...
 ---
