@@ -22,11 +22,6 @@ Fish and Chips and Apache Kafke®
 
       Spacer 0 5
 
-Lo, there shall be slides
--------------------------
-
-...but this isn't really one
-
 What we'll cover
 ----------------
 
@@ -84,10 +79,10 @@ Participants for an order
 -------------------------
 
 .. image:: images/Fish-Till-Preparer-Others-b.png
-   :width: 100%
+   :width: 90%
 
-The process
------------
+Serving a customer
+------------------
 
 .. raw:: pdf
 
@@ -140,8 +135,8 @@ Code: Producer
         ssl_keyfile=f'{certs_dir}/service.key',
         value_serializer=lambda v: json.dumps(v).encode('ascii'),
 
-    while TRUE:
-        # get order
+    while SHOP_IS_OPEN:
+        # get order from CUSTOMER
         producer.sendi('ORDER'), order)
 
 Code: Consumer
@@ -164,8 +159,8 @@ Code: Consumer
     for msg in consumer:
         print(f'Message {msg.value}')
 
-Code: Asynchnous - needs SSL context
-------------------------------------
+Code: Asynchronous - needs SSL context
+--------------------------------------
 
 .. code:: python
 
@@ -177,8 +172,8 @@ Code: Asynchnous - needs SSL context
         keyfile=CERTS_DIR / "service.key",
     )
 
-Code: Asynchnous Producer
--------------------------
+Code: Asynchronous Producer
+---------------------------
 
 .. code:: python
 
@@ -193,12 +188,12 @@ Code: Asynchnous Producer
 
     await producer.start()
 
-    while TRUE:
-        # get order
+    while SHOP_IS_OPEN:
+        # get order from CUSTOMER
         await producer.send_and_wait('ORDERS', message)
 
-Code: Asynchnous Consumer
--------------------------
+Code: Asynchronous Consumer
+---------------------------
 
 .. code:: python
 
@@ -218,20 +213,8 @@ Code: Asynchnous Consumer
 Other participants (adding Business Value)
 ------------------------------------------
 
-Show full diagram, with the maximum number of participants
-
-Other participants (adding Business Value)
-------------------------------------------
-
-For the demo, we shall only add the STATISTICIAN
-
-Add ACCOUNTANT, STATISTICIAN and STOCKIST to diagram::
-
-  TILL -> [ORDER] -> FOOD-PREPARER -> [READY] -> COUNTER
-
-          [ORDER] -> STATISTICIAN -> OpenSearch
-
-*Maybe without [READY] and COUNTER?*
+.. image:: images/Fish-Till-Preparer-Others-b.png
+   :width: 90%
 
 What we need in the (consumer creation) code
 --------------------------------------------
@@ -254,11 +237,13 @@ Picture of demo: 2
 ------------------
 
 .. note:: Now the toggle button is ON, and we should be able to see that the
-          STATISTICIAN is looking at older entries, as they start from the
+          ANALYST is looking at older entries, as they start from the
           beginning of the stream
 
 Code: Consumer sending data to OpenSearch
 -----------------------------------------
+
+(demo only adds ANALYST)
 
 .. note:: Code for this case - show the loop that gets the next event
    and sends it to OpenSearch
@@ -348,7 +333,7 @@ Participant changes - add COOK
 ------------------------------
 
 .. image:: images/Fish-All-with-Cook.png
-   :width: 60%
+   :width: 58%
 
 An order with plaice
 --------------------
@@ -358,6 +343,7 @@ An order with plaice
    {
       'order': 271,
       'customer': 'Tibs',
+      'queue': 3,
       'parts': [
           ['cod', 'chips'],
           ['chips', 'chips'],
