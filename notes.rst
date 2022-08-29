@@ -121,6 +121,12 @@ start consuming events from the past, and more.
    STOCKIST in as something that can be enabled in a running demo - they
    would then start at the start of events.
 
+https://opencredo.com/blogs/kafka-vs-rabbitmq-the-consumer-driven-choice/
+looks like a VERY useful comparison for my purposes
+
+Maybe also see
+https://iasymptote.medium.com/kafka-v-s-zeromq-v-s-rabbitmq-your-15-minute-architecture-guide-426f5920c89f
+
 What I want from messaging
 --------------------------
 
@@ -149,7 +155,42 @@ Producers, Consumers
 
 Events, topics, partitions
 
+Kafka is a "distributed event streaming platform (which also handles
+messages)" (from https://opencredo.com/blogs/kafka-vs-rabbitmq-the-consumer-driven-choice/)
 
+Consumers and consumer groups
+-----------------------------
+
+Need consumers to be in different groups if I want them to read the same
+messages (as I do for FOOD-PREPARER and ANALYST, for instance)
+
+https://stackoverflow.com/questions/35561110/can-multiple-kafka-consumers-read-same-message-from-the-partition
+
+https://www.oreilly.com/library/view/kafka-the-definitive/9781491936153/ch04.html -
+consumers
+
+Consumer can consume from multiple partitions, but only one consumer (in the
+same consumer group) can read from each partition. So if there are N
+partitions (in a consumer group) and N+X consumers, each wanting to read from
+one partition each, X consumers will be idle.
+
+"So the rule in Kafka is only one consumer in a consumer group can be assigned
+to consume messages from a partition in a topic and hence multiple Kafka
+consumers from a consumer group can not read the same message from a
+partition."
+
+https://gist.github.com/andrewlouis93/5fd10d8041aeaf733d3acfbd61f6bbef How are
+partitions assigned in a consumer group? (GIST)
+
+https://codingharbour.com/apache-kafka/what-is-a-consumer-group-in-kafka/ --
+this looks like a nice article with good explanations
+
+------
+
+https://aozturk.medium.com/kafka-guide-in-depth-summary-5b3cb6dbc83c
+
+https://www.oreilly.com/library/view/kafka-the-definitive/9781491936153/ch01.html -
+Meet Kafka
 
 Fish and chip shop
 ------------------
@@ -281,8 +322,8 @@ An order with queues
    }
 
 
-Even more customes - add more preparers
----------------------------------------
+Even more customers - add more preparers
+----------------------------------------
 
 <New diagram>
 
@@ -291,6 +332,7 @@ That is, use multiple *consumers*
 May want to do the same for the counter as well (the split for queues/preparers on the
 'order' topic need not be the as the split for orders preparer/counter-person
 on the 'ready' topic)
+
 
 Cod or plaice
 -------------
