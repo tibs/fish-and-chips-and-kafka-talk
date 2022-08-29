@@ -9,10 +9,11 @@ A talk to be given at PyCon UK 2022
 
 .. contents::
 
-Abstract
-========
+From proposal
+=============
 
-.. note:: *From the submission*
+Abstract
+--------
 
 Apache Kafka® is the de facto standard in the data streaming world for sending
 messages from multiple producers to multiple consumers, in a fast, reliable
@@ -22,9 +23,7 @@ Come and learn the basic concepts and how to use it, by modelling a fish and
 chips shop!
 
 Introduction
-============
-
-.. note:: *Steal from the submission and prune*
+------------
 
 Handling large numbers of events is an increasing challenge in our cloud
 centric world. For instance, in the IoT (Internet of Things) industry, devices
@@ -49,6 +48,28 @@ I'll demonstrate handling of multiple producers and consumers, automatic routing
 events as new consumers are added, persistence, which allows a new consumer to
 start consuming events from the past, and more.
 
+Questions
+=========
+
+Can I specify a particular offset from which to start consuming messages (not
+just earliest or latest)?
+
+Make sure I have a good understanding of what happens to *old* messages in a
+topic - they can't *actually* keep accumulating forever.
+
+What's the best way of sending to OpenSearch for my demo - just do a POST?
+
+Ditto for retrieving data - probably want to do an asynchronous query.
+
+-----
+
+https://www.scrapingbee.com/blog/best-python-http-clients/ compares requests,
+aiohttp and httpx, which might be useful
+
+https://docs.aiohttp.org/en/stable/
+
+https://www.python-httpx.org/ and https://www.python-httpx.org/async/
+
 Actual notes
 ============
 
@@ -67,7 +88,6 @@ microservices.
 For many of those purposes, I would now expect to use Apache Kafka, and this
 talk aims to show why it is a useful addition to the messaging toolkit.
 
-Stolen introduction
 -------------------
 
 Description from the proposal:
@@ -94,6 +114,12 @@ accounting and so on.
 I'll demonstrate handling of multiple producers and consumers, automatic routing of
 events as new consumers are added, persistence, which allows a new consumer to
 start consuming events from the past, and more.
+
+.. note:: Do I actually show persistence?
+
+   Best way to do that might be to add the ACCOUNTANT, STATISTICIAN and
+   STOCKIST in as something that can be enabled in a running demo - they
+   would then start at the start of events.
 
 What I want from messaging
 --------------------------
@@ -138,8 +164,8 @@ The fish and chip shop model
 
 Start with a diagram showing my plan!
 
-*All the participant and topic names could be improved. I've used UPPER-CASE
-names to make it easier to change them later on.*
+.. note:: *All the participant and topic names could be improved. I've used
+   UPPER-CASE names to make it easier to change them later on.*
 
 First model
 -----------
@@ -147,8 +173,8 @@ First model
 This model shows the progress of orders through the system, and how there may
 be multiple interests in the data.
 
-Participants
-------------
+Basic Participants
+------------------
 
 * CUSTOMER - implicit, makes an order (we don't model them directly)
 * TILL - takes order from CUSTOMER, sends order to 'ORDER' topic
@@ -163,21 +189,11 @@ Participants
 * COUNTER - listens to 'READY' topic, passes finished order on to
   customer (again, we don't model the customer directly)
 
-* ACCOUNTANT - listens to 'ORDER' topic, calculates incoming money - may be
-  putting each order into a database, or even a spreadsheet(!)
-
-* STATISTICIAN - listens to (all of) 'ORDER' topic, and sends data to
-  OpenSearch for analysis. For instance, percentage of orders that needed
-  sending to cook, number of orders of each type of food (cod, plaice, chips),
-  and so on.
-
-  *Ideally, the demo would show some statistics as they occur*
-
-* STOCKIST - listens to (all of) 'ORDER' topic, to work out what consumables
-   (portions of chips, cod, plaice) are being used. May also be using
-   OpenSearch, or might be using a database or spreasheet.
-
 *All these names could be improved*
+
+*Do we actually need the 'READY' topic and the COUNTER, or can we just assume
+the FOOD-PREPARER hands the food to the CUSTOMER, who is quick and eager to
+take it?*
 
 Cod and chips
 -------------
@@ -199,12 +215,6 @@ An order
       ]
    }
 
-
-Cod and chips participants
---------------------------
-
-... all of the above, except the COOK, who doesn't need messages
-
 Let's build some code
 ---------------------
 
@@ -216,11 +226,31 @@ A series of slides showing how to do the above, in sections.
 asynchronous*
 
 
+Extra participants (Business value)
+-----------------------------------
 
-Show how it works
------------------
+Add in more participants, who are watching what goes on.
 
-Including some code
+In the demo, have button to show adding them, and show that they start
+consuming events from the start of the demo, not just from when they
+started work.
+
+* ACCOUNTANT - listens to 'ORDER' topic, calculates incoming money - may be
+  putting each order into a database, or even a spreadsheet(!)
+
+* STATISTICIAN - listens to (all of) 'ORDER' topic, and sends data to
+  OpenSearch for analysis. For instance, percentage of orders that needed
+  sending to cook, number of orders of each type of food (cod, plaice, chips),
+  and so on.
+
+  *Ideally, the demo would show some statistics as they occur*
+
+* STOCKIST - listens to (all of) 'ORDER' topic, to work out what consumables
+   (portions of chips, cod, plaice) are being used. May also be using
+   OpenSearch, or might be using a database or spreasheet.
+
+.. note:: For the slides, probably better to just use the STATISTICIAN, so
+          that we only have one example of sending data to OpenSearch
 
 More customers - add queues
 ---------------------------
@@ -262,17 +292,14 @@ May want to do the same for the counter as well (the split for queues/preparers 
 'order' topic need not be the as the split for orders preparer/counter-person
 on the 'ready' topic)
 
-
-
-
 Cod or plaice
 -------------
 
 Plaice needs to be cooked. So we alter the sequence to add in asking the cook
 to prepare plaice.
 
-Participant changes
--------------------
+Participant changes - add COOK
+------------------------------
 
 We add two new topics, COOK for requests to cook plaice, and HOT-FOOD for
 orders that have had their plaice cooked.
@@ -306,6 +333,9 @@ We're going to keep using the same order structure, since it's simplest.
 * STOCKIST - now listens to (all of) 'ORDER' topic, and (all of) 'COOK' topic,
   to work out what consumables (portions of chips, cod, plaice) are being
   used. May also be using OpenSearch, or might be using a database.
+
+.. note:: For the slides, probably better to just use the STATISTICIAN, so
+          that we only have one example of sending data to OpenSearch
 
 An order with plaice
 --------------------
