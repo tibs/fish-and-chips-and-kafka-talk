@@ -60,7 +60,7 @@ for qrencode_, which I installed with ``brew install qrencode`` on my Mac.
 The demo
 ~~~~~~~~
 
-The source code for the demonstration program is in the `src`_ directory. See
+The source code for the demonstration program is in the `src <src/>`_ directory. See
 the `readme.rst <src/readme.rst>`_ for how to run it.
 
 The slide notes
