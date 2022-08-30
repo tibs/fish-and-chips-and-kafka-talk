@@ -4,6 +4,12 @@ Fish and Chips and Apache Kafka®
 
 A talk entitled "Fish and Chips and Apache Kafka®"
 
+.. ------------------------------------------
+
+*Which is very definitely not ready yet*
+
+.. ------------------------------------------
+
 This is a talk for presentation at `PyCon UK 2022`_,
 16th - 18th September 2022.
 

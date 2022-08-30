@@ -2,6 +2,8 @@
 Demo for "Fish and Chips and Apache Kafka®" talk
 ================================================
 
+*Why no, it's not even remotely ready yet!*
+
 Dependencies
 ============
 
