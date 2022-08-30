@@ -61,6 +61,16 @@ What's the best way of sending to OpenSearch for my demo - just do a POST?
 
 Ditto for retrieving data - probably want to do an asynchronous query.
 
+In the "Introduction", I said " I'll demonstrate ... persistence, which allows
+a new consumer to start consuming events from the past". So I need to talk
+about how to do that. See, for instance
+
+* https://kafka-python.readthedocs.io/en/master/apidoc/KafkaConsumer.html#kafka.KafkaConsumer.commit
+* https://kafka-python.readthedocs.io/en/master/apidoc/KafkaConsumer.html#kafka.KafkaConsumer.commit_async
+* https://kafka-python.readthedocs.io/en/master/apidoc/KafkaConsumer.html#kafka.KafkaConsumer.committed
+* https://kafka-python.readthedocs.io/en/master/apidoc/KafkaConsumer.html#kafka.KafkaConsumer.offsets_for_times
+* https://kafka-python.readthedocs.io/en/master/apidoc/KafkaConsumer.html#kafka.KafkaConsumer.seek
+
 -----
 
 https://www.scrapingbee.com/blog/best-python-http-clients/ compares requests,
