@@ -25,47 +25,56 @@ Fish and Chips and Apache Kafke®
 What we'll cover
 ----------------
 
-.. note:: Maybe. See how it goes.
+* Me and messaging and Apache Kafka®
+* Fish and chips
+
+  * How to talk to Kafka
+  * Start with a simple model and work up
+  * There's a demo you can play with afterwards
 
 
-Why I'm interested in messaging
--------------------------------
+Some message problems I've cared about
+--------------------------------------
 
-Messges:
+* between components on a Set Top Box
 
-* between Set Top Box components
-* to/from Interner of Things devices
-* ...and their support systems
+* to / from Internet of Things devices, and their support systems
+
 * configuration between microservices
+
+Kafka is a very good fit for the IoT cases, maybe less so for the others
 
 What I want from messaging
 --------------------------
 
 * multiple producers *and* multiple consumers
-* single delivery (deliver once to on consumer)
+* single delivery
 * guaranteed delivery
-* no problems if queue crashes and resumes
-* no need for back pressure handling (queue filling up)
+* resumes safely if system crashes
+* no back pressure handling (queue does not fill up)
 
-Why not use a database?
------------------------
+..
+   Why not use a database?
+   -----------------------
 
-I've seen people do this.
+   I've seen people do this.
 
-It means you have to implement all the actual *messaging* stuff yourself
+   It means you have to implement all the actual *messaging* stuff yourself
 
 Enter, Apache Kafka®
 --------------------
 
-... brief explanation
+Messages are *Events*
 
-Events == Messages
+Can have multiple *Producers* and *Consumers*
 
-Producers and Consumers
+A Producer send a message to a named *Topic*,
+each Consumer reads from one Topic
 
-Topics
+*Partitions* can be used to "spread the load" within a Topic
 
-Partitions
+  Messages go to a partition based on their *Key*, and Consumers read from one or
+  more partitions in their chosen Topic
 
 Let's model a fish-and-chip shop
 --------------------------------
@@ -77,6 +86,9 @@ We start with a shop that
 
 Participants for an order
 -------------------------
+
+.. I need to improve the images (!)
+   Also, probably worth trying out SVG to see if that's better quality
 
 .. image:: images/Fish-Till-Preparer-Others-b.png
    :width: 90%
@@ -99,18 +111,26 @@ An order
 .. code:: json
 
    {
-      'order': 271,
-      'customer': 'Tibs',
-      'parts': [
-          ['cod', 'chips'],
-          ['chips', 'chips'],
+      "order": 271,
+      "customer": "Tibs",
+      "parts": [
+          ["cod", "chips"],
+          ["chips", "chips"],
       ]
    }
 
 Picture of demo
 ---------------
 
-.. note:: Picture of the first demo
+.. The demo window was set to 211x41, with the text size increased 4 times,
+   and I captured just the "text" portion. I think bigger text would help, and
+   the aspect ratio could be improved.
+
+   It's also probably worth creating a new page format that allows me to use
+   more of the slide without causing the next slide to be a blank widow slide.
+
+.. image:: images/temp-screenshot.png
+   :width: 78%
 
 Libraries
 ---------
@@ -118,6 +138,8 @@ Libraries
 `kafka-python`: https://github.com/dpkp/kafka-python
 
 `aiokafka`: https://github.com/aio-libs/aiokafka
+
+`Textual`: https://github.com/Textualize/textual
 
 
 Code: Producer
@@ -210,6 +232,18 @@ Code: Asynchronous Consumer
     async for message in consumer:
         print(f'Received {message.value}')
 
+We just looked at
+-----------------
+
+.. raw:: pdf
+
+   Spacer 0 30
+
+.. TILL -> [ORDER] -> FOOD-PREPARER -> [READY] -> COUNTER
+
+.. image:: images/Fish-Till-Preparer.png
+   :width: 100%
+
 Other participants (adding Business Value)
 ------------------------------------------
 
@@ -226,6 +260,8 @@ What we need in the (consumer creation) code
         auto_offset_reset="earliest",
 
 (the default is `"latest"`)
+
+*To be added: talking about starting at other offsets*
 
 Picture of demo: 1
 ------------------
@@ -251,25 +287,18 @@ Code: Consumer sending data to OpenSearch
 More customers - add queues
 ---------------------------
 
-Customer now form multiple queues, for multiple tills.
+Customers now queue at multiple TILLs, each TILL is a Producer.
 
-Multiple *producers*
+Use the *queue number* as the key to split the events up into partitions
 
-Add queues, use *queue number* to distinguish customers and split the messages
-up into partitions
-
-Automatically split N queues between <N partitions as the number of partitions
-is increased (so it would be nice if these are both controllable in the demo)
+  *(Automatically split N queues between <N partitions as the number of
+  partitions is increased (so it would be nice if these are both controllable
+  in the demo)*
 
 Diagram
 -------
 
-Diagram with multiple TILLs and (a different number of) FOOD-PREPARER
-
-Diagram
--------
-
-.. note:: Diagram with multiple TILLs
+.. note:: Diagram with 3 TILLs but still 1 FOOD-PREPARER
 
 An order with queues
 --------------------
@@ -277,12 +306,12 @@ An order with queues
 .. code:: json
 
    {
-      'order': 271,
-      'customer': 'Tibs',
-      'queue': 3,
-      'parts': [
-          ['cod', 'chips'],
-          ['chips', 'chips'],
+      "order": 271,
+      "customer": "Tibs",
+      "queue": 3,
+      "parts": [
+          ["cod", "chips"],
+          ["chips", "chips"],
       ]
    }
 
@@ -299,12 +328,12 @@ Demo picture: multiple producers
 
 .. note:: A picture of the demo showing multiple producers
 
-But now the PREPARER is too busy
---------------------------------
+But now the FOOD-PREPARER is too busy
+-------------------------------------
 
 So add multiple *consumers*
 
-.. note:: Diagram with multiple FOOD-PREPARERS - not the same number as TILLS
+.. note:: Diagram with 3 TILLs and 2 FOOD-PREPARER (i.e., 3 > 2)
 
 How we alter the code
 ---------------------
@@ -319,7 +348,11 @@ Demo picture: multiple producers and consumers
 Summary so far
 --------------
 
-...
+We know how to model the ordering and serving of our cod and chips
+
+We know how to share the order information with other data users
+
+We know how to scale with multiple Producers and Consumers
 
 
 Cod or plaice
@@ -341,13 +374,13 @@ An order with plaice
 .. code:: json
 
    {
-      'order': 271,
-      'customer': 'Tibs',
-      'queue': 3,
-      'parts': [
-          ['cod', 'chips'],
-          ['chips', 'chips'],
-          ['plaice', 'chips'].
+      "order": 271,
+      "customer": "Tibs",
+      "queue": 3,
+      "parts": [
+          ["cod", "chips"],
+          ["chips", "chips"],
+          ["plaice", "chips"],
       ]
    }
 
@@ -372,7 +405,16 @@ needing to write Python (or whatever) code.
 Final summary
 -------------
 
-...
+
+We know how to model the ordering and serving of our cod and chips
+
+We know how to share the order information with other data users
+
+We know how to scale with multiple Producers and Consumers
+
+We had a brief look at modelling "plaice" orders
+
+We talked briefly about how one might model the hot cabinet in more detail
 
 Acknowledgements
 ----------------
@@ -380,15 +422,15 @@ Acknowledgements
 Apache,
 Apache Kafka,
 Kafka,
-Apache Flink,
-Flink,
 are either registered trademarks or trademarks of the Apache Software Foundation in the United States and/or other countries
 
 OpenSearch and
 PostgreSQL,
 are trademarks and property of their respective owners.
 
-\*Redis is a registered trademark of Redis Ltd. Any rights therein are reserved to Redis Ltd.
+.. I think I can omit the ``*`` in the context of the slides
+
+Redis is a registered trademark of Redis Ltd. Any rights therein are reserved to Redis Ltd.
 
 .. -----------------------------------------------------------------------------
 
