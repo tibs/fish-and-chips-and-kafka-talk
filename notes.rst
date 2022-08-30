@@ -9,6 +9,104 @@ A talk to be given at PyCon UK 2022
 
 .. contents::
 
+Comments from first practice session at work
+============================================
+
+Note: with a very early stage of things! I've left people's names off the
+comments, since they matter to me but not to other readers.
+
+* *I love the slide/talk of the messages problems… it makes the talk real. But
+  you don’t define what kafka is, but only where it can used*
+
+  I forgot - definitely need to say something like "Apache Kafka is a
+  distributed event store and stream-processing platform." or something a
+  little friendlier. https://kafka.apache.org/intro may also give inspiration
+
+* *I believe the analyst will use a database like PG or Bigquery :)*
+
+  Shift to using PostgreSQL then, as it should be a moderately realistic
+  simulation. And in that case, should probably just use a Kafka Connector,
+  which (a) introduces *that* concept in a nice way, and (b) shows it
+  requiring less code - and not in the simulation code, either.
+
+* *I like it very much. I wonder how did you make the slides with the code? I
+  found it very nice as well.*
+
+* *I was not sure what plaice means. If you want to use the word, maybe an
+  image about this food would be useful.* - *It's a kind of flatfish. But
+  agree that some of these things, even till, might need explanation if you're
+  presenting outside of the UK.*
+
+  Need to explain at least: cod (that it's the traditional default fish),
+  chips (sort-of fat greasy "fries"), plaice (a flat fish, anothe traditional
+  choice - maybe a picture), till (? what's the term for this ?)
+
+* *+1 for adding the slides with copyrights*
+
+* *OpenSearch, why doing that via custom code and not with Kafka connect? I
+  believe it’s better to talk about different consumer groups*
+
+  See above about moving to PG. And definitely I must discuss consumer
+  groups - I think I just forgot because I had no code / diagram to react to.
+
+* *Food preparers need to always be less than the number of tills!*
+
+  I think I had that implicitly, but I forgot to say it.
+
+* *Kafka Connect has the benefits of being able on scale as Kafka*
+
+  ...which I must remember to say.
+
+* *Do you know what time of the day you’ll present? Before / after lunch or
+  before a networking dinner you could joke about making people hungry.*
+
+  At the moment, at PyCon UK, Friday just after lunch.
+
+* *Add a “may contain traces of seafood” joke to you disclaimer slide (where
+  you also talk about working for Aiven)?*
+
+  Hmm. Not sure if I have room on the disclaimer slide, but I'd probably want
+  to go for "no traces of actual seafood" (!)
+
+  ...and, of course, Kafka was a vegetarian...
+
+Other notes:
+
+* Need to spell check!
+* Need actual diagrams for the Kafka explanation, including for partitions
+* I forgot to say what Kafka *is* when I said it suited my needs (see above)
+* I should drop the "extra" participants except the ANALYST, to keep things
+  simpler. And the ANALYST should use PG. Demo should show some sort of
+  statistic that is (repeatedly) computed from the PG data.
+* Don't show the "more complex" setup before the "simple setup" - just add it
+  in later on - that is, start simple and build up, as I said I would
+* Need focussed diagrams when (for instance) adding in the COOK - just showing
+  the FOOD-PREPARER / COOK interaction
+* Even if I don't have time to talk about (or write) the demo using Redis as a
+  cache, it's still worth mentioning this as a possibility
+* Redis also allows Kafka Connect - not sure if that helps in this case
+* For multiple consumers, remember to talk about consumer groups (see above)
+  and what they do for us
+* You can write your own interfaces to other services, but Kafka Connect will
+  scale with Kafka itself, and doesn't involve having to write new Python code
+  (and thus also doesn't take resources from the Python client)
+* Remember to work out my "I work for Aiven and we ..." introduction!
+* Point out that I use the same JSON order, just adding more information each
+  time
+* It's much better to show a captured video of the demo than a static picture,
+  even if that means swapping focus (which shouldn't actually be too bad if
+  there are only two things to flip between)
+* Using a video actually means I don't have to worry about trying to fit a
+  decent image into a slide - but I still need to remember to go for the
+  largest font size I can manage.
+
+"""Since January, I've been working as a Developer Educator at Aiven. Our aim
+is to make developers lives easier, by providing managed open source data
+services in the cloud. As a Developer Educator, that means I get paid to
+understand (and then explain) various things that I'd never before had the
+time to get a proper understanding of, and that includes Apache Kafka®, which
+I want to tell you about today."""
+
 From proposal
 =============
 

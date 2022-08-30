@@ -1,4 +1,4 @@
-Fish and Chips and Apache Kafke®
+Fish and Chips and Apache Kafka®
 ================================
 
 
@@ -38,11 +38,17 @@ Some message problems I've cared about
 
 * between components on a Set Top Box
 
-* to / from Internet of Things devices, and their support systems
-
 * configuration between microservices
 
+* to / from Internet of Things devices, and their support systems
+
 Kafka is a very good fit for the IoT cases, maybe less so for the others
+
+.. Respectively, maybe want:
+
+   * zeromq or similar - lightweight, fast (or, of course kbus <smile>)
+   * a state machine and/or a persistent key/value store
+   * Apache Kafka
 
 What I want from messaging
 --------------------------
@@ -159,7 +165,7 @@ Code: Producer
 
     while SHOP_IS_OPEN:
         # get order from CUSTOMER
-        producer.sendi('ORDER'), order)
+        producer.send('ORDER'), order)
 
 Code: Consumer
 --------------
