@@ -291,19 +291,27 @@ class FoodPreparerWidget(Widget):
 
     async def prepare_order(self, order):
         """Prepare an order"""
+        start = datetime.now()
         self.add_line(
-            f'Received order {order["count"]} at {datetime.now().strftime("%H:%M:%S")}: {pretty_order(order)}'
+            f'Received order {order["count"]} at {start.strftime("%H:%M:%S")}: {pretty_order(order)}'
             )
 
         await asyncio.sleep(random.uniform(PREP_FREQ_MIN, PREP_FREQ_MAX))
 
-        self.add_line(
-            f'    finished order at {datetime.now().strftime("%H:%M:%S")}'
+        lapse = datetime.now() - start
+        self.change_last_line(
+            f'Finished order {order["count"]} of {start.strftime("%H:%M:%S")} after {lapse}: {pretty_order(order)}'
             )
 
     def add_line(self, text):
         """Add a line of text to our scrolling display"""
         self.lines[self.prep_number].append(text)
+        self.refresh()
+        self.app.refresh()
+
+    def change_last_line(self, text):
+        """Change the last line of text to our scrolling display"""
+        self.lines[self.prep_number][-1] = text
         self.refresh()
         self.app.refresh()
 
