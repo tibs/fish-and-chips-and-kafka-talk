@@ -37,8 +37,26 @@ from textual.widgets import Header, Footer, Placeholder, ScrollView
 
 TOPIC_NAME = 'ORDER'
 
+# Bounds on how often a new order occurs
+ORDER_FREQ_MIN = 0.5
+ORDER_FREQ_MAX = 1.0
+
+# Bounds on how long it takes to prepare an order
+PREP_FREQ_MIN = 0.5
+PREP_FREQ_MAX = 1.0
+
+# I'm not keen on globals, but sometimes they're convenient,
+# and they're not *quite* so bad in a program (as opposed to
+# when writing a library)
 global KAFKA_URI    # for the moment
 global CERTS_DIR    # for the moment
+
+
+async def next_order_number():
+    count = 0
+    while True:
+        count += 1
+        yield count
 
 
 async def new_order():
@@ -49,7 +67,7 @@ async def new_order():
     """
 
     # Wait somewhere between 0.5 and 1 seconds (these are fast customers!)
-    await asyncio.sleep(random.uniform(0.5, 1.0))
+    await asyncio.sleep(random.uniform(ORDER_FREQ_MIN, ORDER_FREQ_MAX))
 
     # For the moment, our random order is always the same...
     order = {
@@ -77,7 +95,7 @@ def pretty_order(order):
     return ', '.join(parts)
 
 
-class KafkaProducerWidget(Widget):
+class TillWidget(Widget):
 
     MAX_LINES = 30
 
@@ -117,17 +135,7 @@ class KafkaProducerWidget(Widget):
 
         try:
             while True:
-                order = await new_order()
-                self.count += 1
-                order['count'] = self.count
-
-                self.lines.append(
-                    f'Got order {self.count}: {pretty_order(order)} at {datetime.now().strftime("%H:%M:%S")}'
-                )
-                self.refresh()
-                self.app.refresh()
-
-                await producer.send_and_wait(TOPIC_NAME, order)
+                await self.make_order(producer)
         except Exception as e:
             self.lines.append(f'Exception sending message {e}')
             self.refresh()
@@ -137,6 +145,22 @@ class KafkaProducerWidget(Widget):
             self.refresh()
             self.app.refresh()
             await producer.stop()
+
+    async def make_order(self, producer):
+        """Make a new order ("from a custoemr")"""
+        order = await new_order()
+
+        self.count += 1
+        order['count'] = self.count
+
+        self.lines.append(
+            f'Got order {self.count}: {pretty_order(order)} at {datetime.now().strftime("%H:%M:%S")}'
+        )
+        self.refresh()
+        self.app.refresh()
+
+        #await producer.send_and_wait(TOPIC_NAME, order)
+        await producer.send(TOPIC_NAME, order)
 
     async def on_mount(self):
         asyncio.create_task(self.background_task())
@@ -152,7 +176,7 @@ class KafkaProducerWidget(Widget):
         return Panel(text, title='Producer (TILL)')
 
 
-class KafkaConsumerWidget(Widget):
+class FoodPreparerWidget(Widget):
 
     MAX_LINES = 30
 
@@ -194,19 +218,7 @@ class KafkaConsumerWidget(Widget):
         try:
             while True:
                 async for message in consumer:
-                    order = message.value
-                    self.lines.append(
-                        f'Received order {order["count"]} at {datetime.now().strftime("%H:%M:%S")}: {pretty_order(order)}'
-                        )
-                    self.refresh()
-                    self.app.refresh()
-
-                    await asyncio.sleep(1)  # 1 second to make up an order!
-                    self.lines.append(
-                        f'finished order {order["count"]} at {datetime.now().strftime("%H:%M:%S")}'
-                        )
-                    self.refresh()
-                    self.app.refresh()
+                    await self.prepare_order(message.value)
         except Exception as e:
             self.lines.append(f'Exception receiving message {e}')
             self.refresh()
@@ -217,6 +229,22 @@ class KafkaConsumerWidget(Widget):
             self.refresh()
             self.app.refresh()
             await consumer.stop()
+
+    async def prepare_order(self, order):
+        """Prepare an order"""
+        self.lines.append(
+            f'Received order {order["count"]} at {datetime.now().strftime("%H:%M:%S")}: {pretty_order(order)}'
+            )
+        self.refresh()
+        self.app.refresh()
+
+        await asyncio.sleep(random.uniform(PREP_FREQ_MIN, PREP_FREQ_MAX))
+
+        self.lines.append(
+            f'    finished order at {datetime.now().strftime("%H:%M:%S")}'
+            )
+        self.refresh()
+        self.app.refresh()
 
     async def on_mount(self):
         asyncio.create_task(self.background_task())
@@ -252,8 +280,8 @@ class MyGridApp(App):
         )
 
         grid.place(
-            area1=KafkaProducerWidget(),
-            area2=KafkaConsumerWidget(),
+            area1=TillWidget(),
+            area2=FoodPreparerWidget(),
         )
 
 
