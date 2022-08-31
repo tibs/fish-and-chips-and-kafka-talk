@@ -1,6 +1,13 @@
 #!/usr/bin/env python3
 
-"""shop.py - the demonstration for my talk "Fish and Chips and Apache Kafka®"
+"""poc3.py - asynchronous writes to and reads from Kafka
+
+Shows the messages in two panels, and another panel that just counts.
+
+This was intended to show:
+
+1. Use of aiokafka
+2. Use of panels in Textual
 """
 
 # Thanks to the article at

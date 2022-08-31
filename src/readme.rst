@@ -21,42 +21,91 @@ to set it up with the necessary dependencies.
 
 .. _poetry: https://python-poetry.org/
 
-..
-   Aiven service management
-   ========================
 
-   Logging in
-   ==========
+Aiven service management
+========================
 
-   I logged in using the instructions documented for the `Aiven CLI`_, using
-   a token::
+*I'm noting what I did. You'll need to replace parts of it with your own
+information, and in particular what cloud/region you want to use.*
 
-     avn user login USER-EMAIL-ADDRESS --token
+Logging in
+==========
 
-   .. _`Aiven CLI`: https://docs.aiven.io/docs/tools/cli.html
+If you don't yet have an Aiven account, you can sign up for a free trial at
+https://console.aiven.io/signup/email
 
-   and then did::
+I logged in using the instructions documented for the `Aiven CLI`_, using
+a token:
 
-     avn project switch THE-PROJECT-I-USE
+.. code: shell
 
-   I can list the available clouds with::
+  avn user login USER-EMAIL-ADDRESS --token
 
-     avn cloud list
+.. _`Aiven CLI`: https://docs.aiven.io/docs/tools/cli.html
 
-   and the service plans within a cloud (here, ``google-europe-north1``, which is
-   Finland)::
+and then did:
 
-     avn service plans --service-type kafka --cloud google-europe-north1
+.. code: shell
 
-   ``kafka:startup-2`` is the cheapest.
+  avn project switch $PROJECT_NAME
 
-   Create my Aiven for Apache Kafka® service
-   =========================================
+I can list the available clouds with::
 
-   I followed the instructions for `avn service create`_ and created my new
-   service (the name needs to be unique and can't be changed - I like to put my
-   name in it)::
+  avn cloud list
 
-     avn service create NEW-SERVICE-NAME --service-type kafka --cloud google-europe-north1 --plan startup-2
+and the service plans within a cloud (here, ``google-europe-north1``, which is
+Finland):
 
-   .. _`avn service create`: https://docs.aiven.io/docs/tools/cli/service.html#avn-service-create
+.. code: shell
+
+  avn service plans --service-type kafka --cloud google-europe-north1
+
+``kafka:startup-2`` is the cheapest.
+
+Create my Aiven for Apache Kafka® service
+=========================================
+
+I followed the instructions for `avn service create`_ and created my new
+service (the name needs to be unique and can't be changed - I like to put my
+name in it). The extra ``-c`` switches enable the REST API to the service, the
+ability to create new topics by publishing to them (very useful), use of the
+schema registry (which we actually don't need in this demo) and use of Apache
+Kafka Connect.
+
+.. code: shell
+
+  avn service create $KAFKA_NAME \
+      --service-type kafka \
+      --cloud google-europe-north1 \
+      --plan startup-2 \
+      -c kafka_rest=true \
+      -c kafka.auto_create_topics_enable=true \
+      -c schema_registry=true \
+      -c kafka_connect=true
+
+.. _`avn service create`: https://docs.aiven.io/docs/tools/cli/service.html#avn-service-create
+
+Get the certificates:
+
+.. code:: shell
+
+  mkdir -p creds
+  avn service user-creds-download $KAFKA_NAME --project $PROJECT_NAME -d creds --username avnadmin
+
+**Note** the following are in no way in logical order or anything
+
+.. code:: shell
+
+   avn service update $KAFKA_SERVICE --power-off  # when not using
+
+   avn service update $KAFKA_SERVICE --power-on   # to start again
+   avn service wait $KAFKA_NAME                   # wait for it to be ready
+
+
+Other resources
+===============
+
+You may also be interested in
+https://github.com/aiven/python-notebooks-for-apache-kafka,
+which is a series of Jupyter Notebooks on how to start with Apache Kafka® and
+Python, using Aiven managed services.
