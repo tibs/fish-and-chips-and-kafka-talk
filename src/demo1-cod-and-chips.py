@@ -7,6 +7,12 @@ Shows:
 * "customer" makes up an order
 * TILL sends the order to the ORDER topic
 * FOOD-PREPARER receives the order from the ORDER topic
+
+Note on timing:
+
+* We want customers to make orders at perceptibly random intervals, but not so
+  slow as to be boring.
+* We want the (single) food preparer to have (more than enough) time to make up orders.
 """
 
 # Thanks to the article at
@@ -38,12 +44,15 @@ from textual.widgets import Header, Footer, Placeholder, ScrollView
 TOPIC_NAME = 'ORDER'
 
 # Bounds on how often a new order occurs
-ORDER_FREQ_MIN = 0.5
-ORDER_FREQ_MAX = 1.0
+ORDER_FREQ_MIN = 1.0
+ORDER_FREQ_MAX = 1.5
 
 # Bounds on how long it takes to prepare an order
-PREP_FREQ_MIN = 0.5
-PREP_FREQ_MAX = 1.0
+PREP_FREQ_MIN = 0.9
+PREP_FREQ_MAX = 1.3
+
+# Maximum number of lines to keep for a widget display
+MAX_LINES = 40
 
 # I'm not keen on globals, but sometimes they're convenient,
 # and they're not *quite* so bad in a program (as opposed to
@@ -89,8 +98,6 @@ def pretty_order(order):
 
 
 class TillWidget(Widget):
-
-    MAX_LINES = 30
 
     count = 0
     lines = deque(maxlen=MAX_LINES)
@@ -170,8 +177,6 @@ class TillWidget(Widget):
 
 
 class FoodPreparerWidget(Widget):
-
-    MAX_LINES = 30
 
     count = 0
     lines = deque(maxlen=MAX_LINES)

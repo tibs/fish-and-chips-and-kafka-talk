@@ -69,8 +69,7 @@ I followed the instructions for `avn service create`_ and created my new
 service (the name needs to be unique and can't be changed - I like to put my
 name in it). The extra ``-c`` switches enable the REST API to the service, the
 ability to create new topics by publishing to them (very useful), use of the
-schema registry (which we actually don't need in this demo) and use of Apache
-Kafka Connect.
+schema registry (which we actually don't need in this demo)
 
 .. code: shell
 
@@ -80,10 +79,15 @@ Kafka Connect.
       --plan startup-2 \
       -c kafka_rest=true \
       -c kafka.auto_create_topics_enable=true \
-      -c schema_registry=true \
-      -c kafka_connect=true
+      -c schema_registry=true
 
 .. _`avn service create`: https://docs.aiven.io/docs/tools/cli/service.html#avn-service-create
+
+**Note** If I later want Kafka Connect support (``-c kafka_connect=true``)
+then I need to use a more capable plan, for instance ``business-4``
+
+**Note** If there are VPCs in the region I've chosen, then I also need to
+specify ``--no-project-vpc`` to guarantee that I don't use the VPC.
 
 Get the certificates:
 
@@ -92,7 +96,7 @@ Get the certificates:
   mkdir -p creds
   avn service user-creds-download $KAFKA_NAME --project $PROJECT_NAME -d creds --username avnadmin
 
-**Note** the following are in no way in logical order or anything
+******Note** the following are in no way in logical order or anything
 
 .. code:: shell
 
