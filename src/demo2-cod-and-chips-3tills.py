@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-"""demo1-cod-and-chips.py - the first demonstration for my talk "Fish and Chips and Apache Kafka®"
+"""demo2-cod-and-chips-3tills.py - the second demonstration for my talk "Fish and Chips and Apache Kafka®"
 
 Shows:
 
 * "customer" makes up an order
-* TILL sends the order to the ORDER topic
+* one of the three TILLs sends the order to the ORDER topic
 * FOOD-PREPARER receives the order from the ORDER topic
 """
 
@@ -42,14 +42,28 @@ ORDER_FREQ_MIN = 0.5
 ORDER_FREQ_MAX = 1.0
 
 # Bounds on how long it takes to prepare an order
-PREP_FREQ_MIN = 0.5
-PREP_FREQ_MAX = 1.0
+# ... we've set this so preparing an order *should* fit in between new orders
+PREP_FREQ_MIN = 0.4
+PREP_FREQ_MAX = 0.5
 
 # I'm not keen on globals, but sometimes they're convenient,
 # and they're not *quite* so bad in a program (as opposed to
 # when writing a library)
 global KAFKA_URI    # for the moment
 global CERTS_DIR    # for the moment
+
+
+class OrderNumber:
+    """An order number that we can increment safely from different async tasks"""
+
+    lock = asyncio.Lock()
+    count = 0
+
+    @classmethod
+    async def get_next_order_number(cls):
+        async with cls.lock:
+            cls.count += 1
+            return cls.count
 
 
 async def new_order():
@@ -92,81 +106,74 @@ class TillWidget(Widget):
 
     MAX_LINES = 30
 
-    count = 0
-    lines = deque(maxlen=MAX_LINES)
+    lines = {}
+
+    def __init__(self, till_number: str, name: str | None = None) -> None:
+
+        self.till_number = till_number
+        self.lines[till_number] = deque(maxlen=self.MAX_LINES)
+        super().__init__(name)
 
     async def background_task(self):
-        try:
-            context = aiokafka.helpers.create_ssl_context(
-                cafile=CERTS_DIR / "ca.pem",
-                certfile=CERTS_DIR / "service.cert",
-                keyfile=CERTS_DIR / "service.key",
-            )
-        except Exception as e:
-            self.lines.append(f'Producer SSL Exception {e.__class__.__name__} {e}')
-            return
-        self.lines.append('Producer SSL context acquired')
-
         try:
             producer = aiokafka.AIOKafkaProducer(
                 bootstrap_servers=KAFKA_URI,
                 security_protocol="SSL",
-                ssl_context=context,
+                ssl_context=SSL_CONTEXT,
                 value_serializer=lambda v: json.dumps(v).encode('ascii'),
             )
         except Exception as e:
-            self.lines.append(f'Producer Exception {e.__class__.__name__} {e}')
+            self.add_line(f'Producer Exception {e.__class__.__name__} {e}')
             return
-        self.lines.append('Producer created')
+        self.add_line('Producer created')
 
         try:
             await producer.start()
         except Exception as e:
-            self.lines.append(f'Producer start Exception {e.__class__.__name__} {e}')
+            self.add_line(f'Producer start Exception {e.__class__.__name__} {e}')
             return
-        self.lines.append('Producer started')
+        self.add_line('Producer started')
 
         try:
             while True:
                 await self.make_order(producer)
         except Exception as e:
-            self.lines.append(f'Exception sending message {e}')
-            self.refresh()
-            self.app.refresh()
+            self.add_line(f'Exception sending message {e}')
         finally:
-            self.lines.append(f'Producer stopping')
-            self.refresh()
-            self.app.refresh()
+            self.add_line(f'Producer stopping')
             await producer.stop()
 
+    def add_line(self, text, refresh=True):
+        """Add a line of text to our scrolling display"""
+        self.lines[self.till_number].append(text)
+        if refresh:
+            self.refresh()
+            self.app.refresh()
+
     async def make_order(self, producer):
-        """Make a new order ("from a custoemr")"""
+        """Make a new order ("from a customer")"""
         order = await new_order()
 
-        self.count += 1
-        order['count'] = self.count
+        order['count'] = count = await OrderNumber.get_next_order_number()
 
-        self.lines.append(
-            f'Got order {self.count}: {pretty_order(order)} at {datetime.now().strftime("%H:%M:%S")}'
+        self.add_line(
+            f'Got order {count}: {pretty_order(order)} at {datetime.now().strftime("%H:%M:%S")}'
         )
-        self.refresh()
-        self.app.refresh()
 
-        #await producer.send_and_wait(TOPIC_NAME, order)
         await producer.send(TOPIC_NAME, order)
 
     async def on_mount(self):
         asyncio.create_task(self.background_task())
 
     def make_text(self, height):
-        lines = list(self.lines)
+        lines = list(self.lines[self.till_number])
         # The value of 2 seems unnecessarily magical
         # I assume it's the widget height - the panel border
         return '\n'.join(lines[-(height-2):])
 
     def render(self):
         text = self.make_text(self.size.height)
-        return Panel(text, title='Producer (TILL)')
+        return Panel(text, title=f'Producer (TILL {self.till_number})')
 
 
 class FoodPreparerWidget(Widget):
@@ -178,22 +185,11 @@ class FoodPreparerWidget(Widget):
 
     async def background_task(self):
         try:
-            context = aiokafka.helpers.create_ssl_context(
-                cafile=CERTS_DIR / "ca.pem",
-                certfile=CERTS_DIR / "service.cert",
-                keyfile=CERTS_DIR / "service.key",
-            )
-        except Exception as e:
-            self.lines.append(f'Consumer SSL Exception {e.__class__.__name__} {e}')
-            return
-        self.lines.append('Consumer SSL context acquired')
-
-        try:
             consumer = aiokafka.AIOKafkaConsumer(
                 TOPIC_NAME,
                 bootstrap_servers=KAFKA_URI,
                 security_protocol="SSL",
-                ssl_context=context,
+                ssl_context=SSL_CONTEXT,
                 value_deserializer = lambda v: json.loads(v.decode('ascii')),
             )
         except Exception as e:
@@ -263,18 +259,24 @@ class MyGridApp(App):
         grid = await self.view.dock_grid(edge='left', name='left-grid')
 
         grid.add_column('left', fraction=1, min_size=20)
+        grid.add_column('middle', fraction=1, min_size=20)
         grid.add_column('right', fraction=1, min_size=20)
 
         grid.add_row('top', fraction=1)
+        grid.add_row('bottom')
 
         grid.add_areas(
             area1='left,top',
-            area2='right,top',
+            area2='middle,top',
+            area3='right,top',
+            area4='left-start|right-end,bottom',
         )
 
         grid.place(
-            area1=TillWidget(),
-            area2=FoodPreparerWidget(),
+            area1=TillWidget(1),
+            area2=TillWidget(2),
+            area3=TillWidget(3),
+            area4=FoodPreparerWidget(),
         )
 
 
@@ -288,9 +290,17 @@ def main(kafka_uri, certs_dir):
 
     global KAFKA_URI    # for the moment
     global CERTS_DIR    # for the moment
+    global SSL_CONTEXT  # for the moment
+
     print(f'Kafka URI {kafka_uri}, certs dir {certs_dir}')
     KAFKA_URI = kafka_uri
     CERTS_DIR = pathlib.Path(certs_dir)
+
+    SSL_CONTEXT = aiokafka.helpers.create_ssl_context(
+        cafile=CERTS_DIR / "ca.pem",
+        certfile=CERTS_DIR / "service.cert",
+        keyfile=CERTS_DIR / "service.key",
+    )
 
     MyGridApp.run(title="Simple App", log="textual.log")
 
