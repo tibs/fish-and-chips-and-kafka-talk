@@ -94,6 +94,16 @@ We start with a shop that
 * just handles cod and chips
 * which are always ready to be served
 
+Glossary
+--------
+
+.. I'm sure everyone loves a glossary
+
+* **Cod**: the traditional white fish for english fish-and-chip shops
+* **Chips**: fatter, possibly soggier, french fries
+* **Plaice**: a flat fish
+* **Till**: a cash register
+
 Serving a customer
 ------------------
 
