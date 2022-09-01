@@ -4,7 +4,7 @@ Fish and Chips and Apache Kafka®
 
 .. class:: title-slide-info
 
-    By Tibs / Tony Ibbs (they / he)
+    By Tibs (they / he)
 
     .. raw:: pdf
 
