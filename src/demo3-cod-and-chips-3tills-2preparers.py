@@ -203,6 +203,11 @@ class TillWidget(Widget):
         # TODO I need to work out what I am doing wrong that means that approaches
         # (1) and (2) don't seem to be working for me.
         #
+        # *CHECK* that whether it works in kafka-python, in case it's an aiokafk
+        #         problem.
+        #
+        # Also consider hashing on the order number
+        #
         # 1. Specifying a key means that the key will be hashed and used to decide
         #    which partition to send the message to. This also means that the
         #    key value must deserialise as bytes, which is why we set `order['till']`

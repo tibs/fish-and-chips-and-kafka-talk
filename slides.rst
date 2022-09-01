@@ -59,16 +59,15 @@ What I want from messaging
 * resumes safely if system crashes
 * no back pressure handling (queue does not fill up)
 
-..
-   Why not use a database?
-   -----------------------
-
-   I've seen people do this.
-
-   It means you have to implement all the actual *messaging* stuff yourself
-
 Enter, Apache Kafka®
 --------------------
+
+.. Actually give the high-level explanation of what Kafka *is*
+
+Kafka explanation, part 1
+-------------------------
+
+*Add pictures!*
 
 Messages are *Events*
 
@@ -76,6 +75,11 @@ Can have multiple *Producers* and *Consumers*
 
 A Producer send a message to a named *Topic*,
 each Consumer reads from one Topic
+
+Kafka explanation, part 2
+-------------------------
+
+*Add pictures!*
 
 *Partitions* can be used to "spread the load" within a Topic
 
@@ -90,15 +94,6 @@ We start with a shop that
 * just handles cod and chips
 * which are always ready to be served
 
-Participants for an order
--------------------------
-
-.. I need to improve the images (!)
-   Also, probably worth trying out SVG to see if that's better quality
-
-.. image:: images/Fish-Till-Preparer-Others-b.png
-   :width: 90%
-
 Serving a customer
 ------------------
 
@@ -106,7 +101,7 @@ Serving a customer
 
    Spacer 0 30
 
-.. TILL -> [ORDER] -> FOOD-PREPARER -> [READY] -> COUNTER
+.. TILL -> [ORDER] -> FOOD-PREPARER
 
 .. image:: images/Fish-Till-Preparer.png
    :width: 100%
@@ -118,25 +113,29 @@ An order
 
    {
       "order": 271,
-      "customer": "Tibs",
       "parts": [
           ["cod", "chips"],
           ["chips", "chips"],
       ]
    }
 
-Picture of demo
+Show first demo
 ---------------
 
-.. The demo window was set to 211x41, with the text size increased 4 times,
-   and I captured just the "text" portion. I think bigger text would help, and
-   the aspect ratio could be improved.
+.. Yes, this is deliberately repeating the image from above,
+   because this is what I intend to demo
 
-   It's also probably worth creating a new page format that allows me to use
-   more of the slide without causing the next slide to be a blank widow slide.
+   DEMO: simple TILL -> [ORDER] -> FOOD-PREPARER
 
-.. image:: images/temp-screenshot.png
-   :width: 78%
+.. raw:: pdf
+
+   Spacer 0 30
+
+.. TILL -> [ORDER] -> FOOD-PREPARER
+
+.. image:: images/Fish-Till-Preparer.png
+   :width: 100%
+
 
 Libraries
 ---------
@@ -238,83 +237,32 @@ Code: Asynchronous Consumer
     async for message in consumer:
         print(f'Received {message.value}')
 
-We just looked at
------------------
-
-.. raw:: pdf
-
-   Spacer 0 30
-
-.. TILL -> [ORDER] -> FOOD-PREPARER -> [READY] -> COUNTER
-
-.. image:: images/Fish-Till-Preparer.png
-   :width: 100%
-
-Other participants (adding Business Value)
-------------------------------------------
-
-.. image:: images/Fish-Till-Preparer-Others-b.png
-   :width: 90%
-
-What we need in the (consumer creation) code
---------------------------------------------
-
-... to make the new participants start from the start of the events
-
-.. code:: python
-
-        auto_offset_reset="earliest",
-
-(the default is `"latest"`)
-
-*To be added: talking about starting at other offsets*
-
-Picture of demo: 1
-------------------
-
-.. note:: This demo has a toggle button to switch on the other participants.
-          In this picture it is OFF.
-
-Picture of demo: 2
-------------------
-
-.. note:: Now the toggle button is ON, and we should be able to see that the
-          ANALYST is looking at older entries, as they start from the
-          beginning of the stream
-
-Code: Consumer sending data to OpenSearch
------------------------------------------
-
-(demo only adds ANALYST)
-
-.. note:: Code for this case - show the loop that gets the next event
-   and sends it to OpenSearch
-
-More customers - add queues
----------------------------
+More customers - add more TILLs
+-------------------------------
 
 Customers now queue at multiple TILLs, each TILL is a Producer.
 
 Use the *queue number* as the key to split the events up into partitions
 
-  *(Automatically split N queues between <N partitions as the number of
-  partitions is increased (so it would be nice if these are both controllable
-  in the demo)*
-
 Diagram
 -------
 
-.. note:: Diagram with 3 TILLs but still 1 FOOD-PREPARER
+Diagram with 3 TILLs but still 1 FOOD-PREPARER ::
 
-An order with queues
---------------------
+  TILL
+      \
+  TILL -> [ORDER with partitions] -> FOOD-PREPARER
+      /
+  TILL
+
+An order with multiple TILLs
+----------------------------
 
 .. code:: json
 
    {
       "order": 271,
-      "customer": "Tibs",
-      "queue": 3,
+      "till": 3,
       "parts": [
           ["cod", "chips"],
           ["chips", "chips"],
@@ -324,32 +272,247 @@ An order with queues
 How we alter the code
 ---------------------
 
+*Correct this once I know what I'm actually using in the demo*
+
 .. code:: python
 
-    # Use a key for hashed-partitioning
-    producer.send('ORDERS', key=b'queue', value=order)
+        #await producer.send(PARTITIONED_TOPIC_NAME, value=order, key='till')
 
-Demo picture: multiple producers
---------------------------------
+        #await producer.send_and_wait(PARTITIONED_TOPIC_NAME, value=order)
 
-.. note:: A picture of the demo showing multiple producers
+        await producer.send(PARTITIONED_TOPIC_NAME, value=order, partition=self.till_number-1)
+
+Show demo: multiple TILLs
+-------------------------
+
+.. The multiple tills picture again
+
+::
+
+  TILL
+      \
+  TILL -> [ORDER with partitions] -> FOOD-PREPARER
+      /
+  TILL
 
 But now the FOOD-PREPARER is too busy
 -------------------------------------
 
 So add multiple *consumers*
 
-.. note:: Diagram with 3 TILLs and 2 FOOD-PREPARER (i.e., 3 > 2)
+::
+
+  TILL                             > FOOD-PREPARER
+      \                           /
+  TILL -> [ORDER with partitions] -> FOOD-PREPARER
+      /                           \
+  TILL                             > FOOD-PERPARER
 
 How we alter the code
 ---------------------
 
-.. note:: Code
+...
 
-Demo picture: multiple producers and consumers
-----------------------------------------------
 
-.. note:: A picture of the demo showing multiple producers and multiple consumers
+Show demo: multiple TILLs and multiple FOOD-PREPARERS
+-----------------------------------------------------
+
+.. The multiple tills picture again
+
+::
+
+  TILL                             > FOOD-PREPARER
+      \                           /
+  TILL -> [ORDER with partitions] -> FOOD-PREPARER
+      /                           \
+  TILL                             > FOOD-PERPARER
+
+
+Cod or plaice
+-------------
+
+Plaice needs to be cooked
+
+So we need a COOK to cook it
+
+.. Keep it to the simple cod-and-chips order from demo 1, with COOK added, so it
+   isn't too complicated to explain
+
+Participant changes - add COOK
+------------------------------
+
+::
+
+  TILL -> [ORDER] -> FOOD-PREPARER
+             ^         |
+             |      [COOK]
+             |         |
+             |         V
+             +------- COOK
+
+An order with plaice
+--------------------
+
+.. code:: json
+
+   {
+      "order": 271,
+      "till": 3,
+      "parts": [
+          ["cod", "chips"],
+          ["chips", "chips"],
+          ["plaice", "chips"],
+      ]
+   }
+
+Gets turned into...
+-------------------
+
+.. code:: json
+
+   {
+      "order": 271,
+      "till": 3,
+      "parts": [
+          ["cod", "chips"],
+          ["chips", "chips"],
+          ["plaice", "chips"],
+      ],
+      "ready": <boolean>
+   }
+
+Code changes to add COOK
+------------------------
+
+... see the notes on this
+
+..
+   * All orders have a "ready" boolean, which is initially set to False
+   * The PREPARER gets the ORDER
+
+     * If the order has "ready" set to True, then everything is available from
+       the hot cabinet, the order can be made up and passed to the customer
+
+     * If the order has "ready" set to False, and there is no "plaice" in
+       the order, then the PREPARER sets "ready" to True (everything can be made
+       up from the hot cabinet) and the order is done
+
+     * If the order has "ready" set to False, but there is "plaice" in the order,
+       then the order is sent to the [COOK] topic for the COOK. The COOK sets the
+       "ready" boolean to True, and sends the order back to the [ORDER] topic.
+
+   This allows the PREPARER to continue with just one topic to listen to, at the
+   penalty of being a little bit horrible (it would get better if/when the Redis
+   cache is provided, because then the check for "ready" would be replaced by a
+   check against the cache).
+
+   Question: do we want a separate partition for orders from the COOK? Or do we
+   want a random partition? (either explicitly or implicitly random)
+
+Demo with COOK
+--------------
+
+Show demo of (simple) cod-and-chips order, with COOK
+
+.. Keep it to the simple cod-and-chips order from demo 1, with COOK added, so it
+   isn't too complicated to explain
+
+
+Adding the ANALYST
+------------------
+
+::
+
+  TILL -> [ORDER] -> FOOD-PREPARER
+                  \
+                   +-> ANALYST -> PG
+
+..
+   Keep it to the simple cod-and-chips order from demo 1, with ANALYST added, so it
+   isn't too complicated to explain. Show some query result from the PG databse
+   being updated - perhaps just total number of orders.
+
+Two ways to do the ANALYST
+--------------------------
+
+1. Add a new (independent) consumer of [ORDER], and have them write to
+   PostgreSQL®
+
+2. Use an Apache Kafka® Connector to connect the [ORDER] topic to PostgreSQL
+   without needing to alter the Python code
+
+If I do (1), then we get to choose when to start the ANALYST consuming, and I
+can do the toggle to start it. But (2) introduces something nice to know
+about, and is probably more realistic.
+
+(Option 1) What we need to do in the code
+-----------------------------------------
+
+... *add code for ANALYST consumer, and make it write to PG*
+
+... *add code to read some sort of statistic from PG and report as it changes*
+
+(Option 1) Demo with ANALYST
+----------------------------
+
+::
+
+  TILL -> [ORDER] -> FOOD-PREPARER
+                  \
+                   +-> ANALYST -> PG
+
+*Maybe with a toggle button to start the ANALYST*
+
+(Option 2) Apache Kafka Connectors
+----------------------------------
+
+These make it easier to connect Kafka to databases, OpenSearch, etc., without
+needing to write Python (or whatever) code.
+
+We shall use this to add our ANALYST
+
+(Option 2) What we need to do in the code
+-----------------------------------------
+
+... *add code to *read* some sort of statistic from PG and report as it changes*
+
+(Option 2) Setting up the PostgreSQL table
+------------------------------------------
+
+... we assume there's already a database
+
+... we need to define the necessary table
+
+(Option 2) Setting up the Kafka Connector
+-----------------------------------------
+
+...
+
+(Option 2) Demo with ANALYST
+----------------------------
+
+::
+
+  TILL -> [ORDER] -> FOOD-PREPARER
+                  \
+                   +-> ANALYST -> PG
+
+
+Start consuming from a specific offset
+--------------------------------------
+
+.. This is probably not going to be in the demo, but I should make sure to
+   talk about how to do it, given I said I would in the talk Introduction
+
+*To be added: talking about starting at other offsets*
+
+... to make the new participants start from the start of the events
+
+.. code:: python
+
+        auto_offset_reset="earliest",
+
+(the default is `"latest"`)
 
 Summary so far
 --------------
@@ -361,52 +524,29 @@ We know how to share the order information with other data users
 We know how to scale with multiple Producers and Consumers
 
 
-Cod or plaice
--------------
-
-Plaice needs to be cooked
-
-So we need a COOK to cook it
-
-Participant changes - add COOK
-------------------------------
-
-.. image:: images/Fish-All-with-Cook.png
-   :width: 58%
-
-An order with plaice
---------------------
-
-.. code:: json
-
-   {
-      "order": 271,
-      "customer": "Tibs",
-      "queue": 3,
-      "parts": [
-          ["cod", "chips"],
-          ["chips", "chips"],
-          ["plaice", "chips"],
-      ]
-   }
-
-Picture of demo with COOK added
--------------------------------
-
-.. note:: Picture of demo now we've got the COOK
-
-Sophisticated model, with caching
----------------------------------
+Homework: Sophisticated model, with caching
+-------------------------------------------
 
 Use a Redis cache to simulate the hot cabinet
 
-...only a brief explanation
+Redis has entries for the hot cabinet content, keyed by ``cod``, (portions of)
+``chips`` and ``plaice``. We start with 0 for all of them.
 
-Apache Kafka Connectors
------------------------
+Homework continued
+------------------
 
-These make it easier to connect Kafka to databases, OpenSearch, etc., without
-needing to write Python (or whatever) code.
+PRODUCER compares the order to the counts in the cache. If there's enough
+"stuff" to make the order up, decrements the cache appropriately, and that's
+done.
+
+If not, sends the order to the COOK, who updates the cache - for ``plaice``
+just adds as many as are needed, for the others, if they go below a threshold,
+adds a standard quantity back in ("cooking in batches"). Then sends the order
+back into the [ORDER] topic.
+
+.. This last is why the slightly icky "setting a boolean flag" trick isn't so
+   bad, as it is sort of simulating what we are doing above. It would be worth
+   explaining this, at this point
 
 Final summary
 -------------
@@ -414,9 +554,9 @@ Final summary
 
 We know how to model the ordering and serving of our cod and chips
 
-We know how to share the order information with other data users
-
 We know how to scale with multiple Producers and Consumers
+
+We know how to share the order information with other data users
 
 We had a brief look at modelling "plaice" orders
 
@@ -430,11 +570,10 @@ Apache Kafka,
 Kafka,
 are either registered trademarks or trademarks of the Apache Software Foundation in the United States and/or other countries
 
-OpenSearch and
-PostgreSQL,
-are trademarks and property of their respective owners.
+Postgres and PostgreSQL are trademarks or registered trademarks of the
+PostgreSQL Community Association of Canada, and used with their permission
 
-.. I think I can omit the ``*`` in the context of the slides
+.. I think I can omit the Redis ``*`` in the context of the slides
 
 Redis is a registered trademark of Redis Ltd. Any rights therein are reserved to Redis Ltd.
 

@@ -107,6 +107,63 @@ understand (and then explain) various things that I'd never before had the
 time to get a proper understanding of, and that includes Apache Kafka®, which
 I want to tell you about today."""
 
+* demo 1 - simple TILL -> FOOD-PREPARER
+* demo 2 - 3 tills, one preparer who can't keep up
+* demo 3 - 2 tills, two (or maybe three) preparers who can keep up, but using
+  partitions to organise who gets what (not just till-1 -> preperer-1)
+* demo 4 - show the COOK loop. Maybe based on demo 1, for simplicity
+* demo 5 - demo 3 + demo 4
+
+NB: implement "while SHOP_IS_OPEN" checking for the Producer loops, where
+``q`` unsets that value. Then make sure the Consumers drain the orders -
+preferably not by inserting a dummy (sentinel) order, but that might be the
+simplest way... (or, just use a decent sized timeout when SHOP_IS_OPEN is False)
+
+
+JDBC sink connector:
+
+* https://docs.aiven.io/docs/products/kafka/kafka-connect/howto/jdbc-sink.html
+* https://docs.aiven.io/docs/tools/cli/service/connector.html#avn-service-connector-create
+
+Kafka streams:
+
+* https://docs.aiven.io/docs/products/kafka/howto/kafka-streams-with-aiven-for-kafka.html
+  (example uses Java)
+
+  faust_ provides Kafka Streams, but (a) is a whole different framework,
+  and (b) seems to need a background worker to be running (perhaps
+  unsurprisngly). It's also not obvious immediately how to write a Producer
+  (although the command line does have a ``send`` command), but of course we
+  could continue to use the original producers.
+
+.. _faust: https://faust.readthedocs.io/
+
+So it may be easier to do the COOK example by:
+
+* All orders have a "ready" boolean, which is initially set to False
+* The PREPARER gets the ORDER
+
+  * If the order has "ready" set to True, then everything is available from
+    the hot cabinet, the order can be made up and passed to the customer
+
+  * If the order has "ready" set to False, and there is no "plaice" in
+    the order, then the PREPARER sets "ready" to True (everything can be made
+    up from the hot cabinet) and the order is done
+
+  * If the order has "ready" set to False, but there is "plaice" in the order,
+    then the order is sent to the [COOK] topic for the COOK. The COOK sets the
+    "ready" boolean to True, and sends the order back to the [ORDER] topic.
+
+This allows the PREPARER to continue with just one topic to listen to, at the
+penalty of being a little bit horrible (it would get better if/when the Redis
+cache is provided, because then the check for "ready" would be replaced by a
+check against the cache).
+
+Question: do we want a separate partition for orders from the COOK? Or do we
+want a random partition? (either explicitly or implicitly random)
+
+
+
 From proposal
 =============
 
