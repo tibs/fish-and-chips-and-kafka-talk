@@ -47,33 +47,24 @@ from textual.widgets import Header, Footer, Placeholder, ScrollView
 
 from demo_helpers import setup_topics
 from demo_helpers import OrderNumber, new_order, pretty_order
+from demo_helpers import DemoWidgetMixin
+from demo_helpers import PREP_FREQ_MIN, PREP_FREQ_MAX
+from demo_helpers import COOK_FREQ_MIN, COOK_FREQ_MAX
 
 
 TOPIC_NAME_ORDERS = 'DEMO5-ORDERS'
 TOPIC_NAME_COOK = 'DEMO5-COOK'
 
-# Bounds on how long it takes to prepare an order
-PREP_FREQ_MIN = 0.9
-PREP_FREQ_MAX = 1.3
-
-# Bounds on how long it takes to cook an order
-COOK_FREQ_MIN = 3.0
-COOK_FREQ_MAX = 3.2
-
-# Maximum number of lines to keep for a widget display
-MAX_LINES = 40
 
 # I'm not keen on globals, but sometimes they're convenient,
 # and they're not *quite* so bad in a program (as opposed to
 # when writing a library)
 global KAFKA_URI    # for the moment
 global CERTS_DIR    # for the moment
+global SSL_CONTEXT  # for the moment
 
 
-class TillWidget(Widget):
-
-    count = 0
-    lines = deque(maxlen=MAX_LINES)
+class TillWidget(DemoWidgetMixin):
 
     async def background_task(self):
         try:
@@ -104,24 +95,15 @@ class TillWidget(Widget):
             self.add_line(f'Producer stopping')
             await producer.stop()
 
-    def add_line(self, text):
-        """Add a line of text to our scrolling display"""
-        self.lines.append(text)
-        self.refresh()
-        self.app.refresh()
-
     async def make_order(self, producer):
         """Make a new order ("from a custoemr")"""
         order = await new_order(allow_plaice=True)
-
-        self.count += 1
-        order['count'] = self.count
 
         order['count'] = count = await OrderNumber.get_next_order_number()
         order['till'] = '1'  # we only have one till
 
         self.add_line(
-            f'Got order {self.count}: {pretty_order(order)} at {datetime.now().strftime("%H:%M:%S")}'
+            f'Got order {count}: {pretty_order(order)} at {datetime.now().strftime("%H:%M:%S")}'
         )
 
         await producer.send(TOPIC_NAME_ORDERS, order)
@@ -129,21 +111,8 @@ class TillWidget(Widget):
     async def on_mount(self):
         asyncio.create_task(self.background_task())
 
-    def make_text(self, height):
-        lines = list(self.lines)
-        # The value of 2 seems unnecessarily magical
-        # I assume it's the widget height - the panel border
-        return '\n'.join(lines[-(height-2):])
 
-    def render(self):
-        text = self.make_text(self.size.height)
-        return Panel(text, title='Producer (TILL)')
-
-
-class FoodPreparerWidget(Widget):
-
-    count = 0
-    lines = deque(maxlen=MAX_LINES)
+class FoodPreparerWidget(DemoWidgetMixin):
 
     async def background_task(self):
         try:
@@ -186,9 +155,8 @@ class FoodPreparerWidget(Widget):
         self.add_line('Producer started')
 
         try:
-            while True:
-                async for message in consumer:
-                    await self.prepare_order(message.value)
+            async for message in consumer:
+                await self.prepare_order(message.value)
         except Exception as e:
             self.add_line(f'Exception receiving message {e}')
             await producer.stop()
@@ -215,7 +183,7 @@ class FoodPreparerWidget(Widget):
         order_available = self.all_order_available(order)
         start = datetime.now()
         self.add_line(
-            f'Received order {order["count"]} at {datetime.now().strftime("%H:%M:%S")}: {pretty_order(order)}'
+            f'Received order {order["count"]} at {start.strftime("%H:%M:%S")}: {pretty_order(order)}'
             )
 
         if order_available:
@@ -224,43 +192,18 @@ class FoodPreparerWidget(Widget):
             lapse = str(datetime.now() - start)[5:-4]  # lost the first and last few digits
             self.change_last_line(
                 f'Finished order {order["count"]} of {start.strftime("%H:%M:%S")} after {lapse}: {pretty_order(order)}'
-                )
+            )
         else:
             await self.producer.send(TOPIC_NAME_COOK, order)
             self.change_last_line(
                 f'Sending order {order["count"]} of {start.strftime("%H:%M:%S")} to COOK: {pretty_order(order)}'
                 )
 
-    def add_line(self, text):
-        """Add a line of text to our scrolling display"""
-        self.lines.append(text)
-        self.refresh()
-        self.app.refresh()
-
-    def change_last_line(self, text):
-        """Change the last line of text to our scrolling display"""
-        self.lines[-1] = text
-        self.refresh()
-        self.app.refresh()
-
     async def on_mount(self):
         asyncio.create_task(self.background_task())
 
-    def make_text(self, height):
-        lines = list(self.lines)
-        # The value of 2 seems unnecessarily magical
-        # I assume it's the widget height - the panel border
-        return '\n'.join(lines[-(height-2):])
 
-    def render(self):
-        text = self.make_text(self.size.height)
-        return Panel(text, title="Consumer (FOOD-PREPARER)")
-
-
-class CookWidget(Widget):
-
-    count = 0
-    lines = deque(maxlen=MAX_LINES)
+class CookWidget(DemoWidgetMixin):
 
     async def background_task(self):
         try:
@@ -336,30 +279,8 @@ class CookWidget(Widget):
             f'Order {order["count"]} of {start.strftime("%H:%M:%S")} available: {pretty_order(order)}'
             )
 
-    def add_line(self, text):
-        """Add a line of text to our scrolling display"""
-        self.lines.append(text)
-        self.refresh()
-        self.app.refresh()
-
-    def change_last_line(self, text):
-        """Change the last line of text to our scrolling display"""
-        self.lines[-1] = text
-        self.refresh()
-        self.app.refresh()
-
     async def on_mount(self):
         asyncio.create_task(self.background_task())
-
-    def make_text(self, height):
-        lines = list(self.lines)
-        # The value of 2 seems unnecessarily magical
-        # I assume it's the widget height - the panel border
-        return '\n'.join(lines[-(height-2):])
-
-    def render(self):
-        text = self.make_text(self.size.height)
-        return Panel(text, title="Consumer (COOK)")
 
 
 class MyGridApp(App):
@@ -384,9 +305,9 @@ class MyGridApp(App):
         )
 
         grid.place(
-            area1=TillWidget(),
-            area2=FoodPreparerWidget(),
-            area3=CookWidget(),
+            area1=TillWidget(1, 'Till producer'),
+            area2=FoodPreparerWidget(1, 'Food preparer comsumer'),
+            area3=CookWidget(1, 'Cook consumer/producer'),
         )
 
 

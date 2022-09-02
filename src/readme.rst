@@ -19,7 +19,6 @@ Also, in theory
 
 ToDo list:
 
-* Make each demo use a different topic
 * Clear the demo topic when the demo starts (if the topic already existed)
 
   I think the best way to do this may be:
@@ -39,24 +38,10 @@ ToDo list:
 
 * Ideally, consumers would be started before the producers started sending events
 * Write demo 4
-* Pull out *some* of the commonalities into a an importable file, but only so
-  far as it helps understanding the code.
-* Generally make the code tidier and more readable.
-* Specifically, I seem to have written:
-
-  .. code:: python
-
-            while True:
-                async for message in consumer:
-                    await self.prepare_order(message.value)
-
-  and surely that `while True` is redundant?
-
-* That includes more comments and some discussion of how the code for a demo
-  is different that that from the previous demo
+* Write more comments and some discussion of how the code for a demo is
+  different that that from the previous demo
 * Do something more useful to set the variables the code needs - this becomes
   important when PG and Kafka Connect get used
-* Make the "generate orders" code generate different orders!
 * Make the "generate orders" code produce a sequence of orders that the TILLs
   can consume in common - so as if the customer enters the shop and goes to
   the next available till. Perhaps make it its own widget so we can see the

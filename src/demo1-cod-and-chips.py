@@ -41,17 +41,13 @@ from textual.widget import Widget
 from textual.widgets import Header, Footer, Placeholder, ScrollView
 
 from demo_helpers import setup_topics
-from demo_helpers import new_order, pretty_order
+from demo_helpers import OrderNumber, new_order, pretty_order
+from demo_helpers import DemoWidgetMixin
+from demo_helpers import PREP_FREQ_MIN, PREP_FREQ_MAX
 
 
 TOPIC_NAME = 'DEMO1-ORDERS'
 
-# Bounds on how long it takes to prepare an order
-PREP_FREQ_MIN = 0.9
-PREP_FREQ_MAX = 1.3
-
-# Maximum number of lines to keep for a widget display
-MAX_LINES = 40
 
 # I'm not keen on globals, but sometimes they're convenient,
 # and they're not *quite* so bad in a program (as opposed to
@@ -61,10 +57,7 @@ global CERTS_DIR    # for the moment
 global SSL_CONTEXT  # for the moment
 
 
-class TillWidget(Widget):
-
-    count = 0
-    lines = deque(maxlen=MAX_LINES)
+class TillWidget(DemoWidgetMixin):
 
     async def background_task(self):
         try:
@@ -75,42 +68,35 @@ class TillWidget(Widget):
                 value_serializer=lambda v: json.dumps(v).encode('ascii'),
             )
         except Exception as e:
-            self.lines.append(f'Producer Exception {e.__class__.__name__} {e}')
+            self.add_line(f'Producer Exception {e.__class__.__name__} {e}')
             return
-        self.lines.append('Producer created')
+        self.add_line('Producer created')
 
         try:
             await producer.start()
         except Exception as e:
-            self.lines.append(f'Producer start Exception {e.__class__.__name__} {e}')
+            self.add_line(f'Producer start Exception {e.__class__.__name__} {e}')
             return
-        self.lines.append('Producer started')
+        self.add_line('Producer started')
 
         try:
             while True:
                 await self.make_order(producer)
         except Exception as e:
-            self.lines.append(f'Exception sending message {e}')
-            self.refresh()
-            self.app.refresh()
+            self.add_line(f'Exception sending message {e}')
         finally:
-            self.lines.append(f'Producer stopping')
-            self.refresh()
-            self.app.refresh()
+            self.add_line(f'Producer stopping')
             await producer.stop()
 
     async def make_order(self, producer):
         """Make a new order ("from a custoemr")"""
         order = await new_order()
 
-        self.count += 1
-        order['count'] = self.count
+        order['count'] = count = await OrderNumber.get_next_order_number()
 
-        self.lines.append(
-            f'Got order {self.count}: {pretty_order(order)} at {datetime.now().strftime("%H:%M:%S")}'
+        self.add_line(
+            f'Got order {count}: {pretty_order(order)} at {datetime.now().strftime("%H:%M:%S")}'
         )
-        self.refresh()
-        self.app.refresh()
 
         #await producer.send_and_wait(TOPIC_NAME, order)
         await producer.send(TOPIC_NAME, order)
@@ -118,21 +104,8 @@ class TillWidget(Widget):
     async def on_mount(self):
         asyncio.create_task(self.background_task())
 
-    def make_text(self, height):
-        lines = list(self.lines)
-        # The value of 2 seems unnecessarily magical
-        # I assume it's the widget height - the panel border
-        return '\n'.join(lines[-(height-2):])
 
-    def render(self):
-        text = self.make_text(self.size.height)
-        return Panel(text, title='Producer (TILL)')
-
-
-class FoodPreparerWidget(Widget):
-
-    count = 0
-    lines = deque(maxlen=MAX_LINES)
+class FoodPreparerWidget(DemoWidgetMixin):
 
     async def background_task(self):
         try:
@@ -144,60 +117,43 @@ class FoodPreparerWidget(Widget):
                 value_deserializer = lambda v: json.loads(v.decode('ascii')),
             )
         except Exception as e:
-            self.lines.append(f'Consumer Exception {e.__class__.__name__} {e}')
+            self.add_line(f'Consumer Exception {e.__class__.__name__} {e}')
             return
-        self.lines.append('Consumer created')
+        self.add_line('Consumer created')
 
         try:
             await consumer.start()
         except Exception as e:
-            self.lines.append(f'Consumer start Exception {e.__class__.__name__} {e}')
+            self.add_line(f'Consumer start Exception {e.__class__.__name__} {e}')
             return
-        self.lines.append('Consumer started')
+        self.add_line('Consumer started')
 
         try:
-            while True:
-                async for message in consumer:
-                    await self.prepare_order(message.value)
+            async for message in consumer:
+                await self.prepare_order(message.value)
         except Exception as e:
-            self.lines.append(f'Exception receiving message {e}')
-            self.refresh()
-            self.app.refresh()
+            self.add_line(f'Exception receiving message {e}')
             await producer.stop()
         finally:
-            self.lines.append(f'Consumer stopping')
-            self.refresh()
-            self.app.refresh()
+            self.add_line(f'Consumer stopping')
             await consumer.stop()
 
     async def prepare_order(self, order):
         """Prepare an order"""
-        self.lines.append(
+        start = datetime.now()
+        self.add_line(
             f'Received order {order["count"]} at {datetime.now().strftime("%H:%M:%S")}: {pretty_order(order)}'
             )
-        self.refresh()
-        self.app.refresh()
 
         await asyncio.sleep(random.uniform(PREP_FREQ_MIN, PREP_FREQ_MAX))
 
-        self.lines.append(
-            f'    finished order at {datetime.now().strftime("%H:%M:%S")}'
-            )
-        self.refresh()
-        self.app.refresh()
+        lapse = str(datetime.now() - start)[5:-4]  # lost the first and last few digits
+        self.change_last_line(
+            f'Finished order {order["count"]} of {start.strftime("%H:%M:%S")} after {lapse}: {pretty_order(order)}'
+        )
 
     async def on_mount(self):
         asyncio.create_task(self.background_task())
-
-    def make_text(self, height):
-        lines = list(self.lines)
-        # The value of 2 seems unnecessarily magical
-        # I assume it's the widget height - the panel border
-        return '\n'.join(lines[-(height-2):])
-
-    def render(self):
-        text = self.make_text(self.size.height)
-        return Panel(text, title="Consumer (FOOD-PREPARER)")
 
 
 class MyGridApp(App):
@@ -220,8 +176,8 @@ class MyGridApp(App):
         )
 
         grid.place(
-            area1=TillWidget(),
-            area2=FoodPreparerWidget(),
+            area1=TillWidget(1, 'Till producer'),
+            area2=FoodPreparerWidget(1, 'Food Preparer consumer'),
         )
 
 

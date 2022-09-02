@@ -6,9 +6,28 @@
 import asyncio
 import random
 
+from collections import deque
+
 # We need kafka-python for admin tasks
 from kafka.admin import KafkaAdminClient, NewTopic
 from kafka.errors import TopicAlreadyExistsError, UnknownTopicOrPartitionError
+
+from rich.panel import Panel
+from textual.widget import Widget
+
+
+# Bounds on how often a new order occurs
+ORDER_FREQ_MIN = 1.0
+ORDER_FREQ_MAX = 1.5
+
+# Bounds on how long it takes to prepare an order
+PREP_FREQ_MIN = 1.0    # was 0.9
+PREP_FREQ_MAX = 2.0    # was 1.3
+
+# Bounds on how long it takes to cook an order
+COOK_FREQ_MIN = 3.0
+COOK_FREQ_MAX = 3.2
+
 
 def setup_topics(kafka_uri, ssl_context, topic_dict):
     """Make sure that the topi we want exists, with the correct number of partitions.
@@ -83,11 +102,6 @@ class OrderNumber:
             return cls.count
 
 
-# Bounds on how often a new order occurs
-ORDER_FREQ_MIN = 1.0
-ORDER_FREQ_MAX = 1.5
-
-
 async def new_order(allow_plaice=False):
     """Wait a random time, return a random order.
 
@@ -156,34 +170,33 @@ class DemoWidgetMixin(Widget):
     the same `lines` dictionary.
     """
 
-    lines = {}  # output lines, per preparer
-
-    instance_number = 0
-    consumer = None
+    # Maximum number of lines to keep for a widget display
+    MAX_LINES = 40
 
     def __init__(self, instance_number: int, name: str | None = None) -> None:
 
         if name is None:
             name = f'{self.__class__.__name__}_{instance_number}'
 
+        self.name = name
         self.instance_number = instance_number
-        self.lines[instance_number] = deque(maxlen=MAX_LINES)
+        self.lines = deque(maxlen=self.MAX_LINES)
         super().__init__(name)
 
     def add_line(self, text):
         """Add a line of text to our scrolling display"""
-        self.lines[self.instance_number].append(text)
+        self.lines.append(text)
         self.refresh()
         self.app.refresh()
 
     def change_last_line(self, text):
         """Change the last line of text to our scrolling display"""
-        self.lines[self.instance_number][-1] = text
+        self.lines[-1] = text
         self.refresh()
         self.app.refresh()
 
     def make_text(self, height):
-        lines = list(self.lines[self.instance_number])
+        lines = list(self.lines)
         # The value of 2 seems unnecessarily magical
         # I assume it's the widget height - the panel border
         return '\n'.join(lines[-(height-2):])

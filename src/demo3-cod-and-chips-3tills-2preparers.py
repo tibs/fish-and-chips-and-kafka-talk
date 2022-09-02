@@ -22,10 +22,6 @@ TODO items
   of synchronisation.
 * Stopping (by typing `q` seems to give me errors, rather than ending nicely. Probably
   because I'm not telling things to tidy up in the right way.
-* If I don't clear out the events from previous runs, then I still tend to see them.
-  So either do that (perhaps delete the topic and then reinvent it), or (better) do
-  proper "start listening to events after time X" setup, which would be nice to show
-  anyway.
 
   Update: implementing `on_shutdown` handlers on the widgets causes me to hang until
   a RequestTimedOutError, instead. Hmm.
@@ -63,18 +59,13 @@ from textual.widgets import Header, Footer, Placeholder, ScrollView
 
 from demo_helpers import setup_topics
 from demo_helpers import OrderNumber, new_order, pretty_order
+from demo_helpers import DemoWidgetMixin
+from demo_helpers import PREP_FREQ_MIN, PREP_FREQ_MAX
 
 
 TOPIC_NAME = 'DEMO3_ORDERS'
-
 CONSUMER_GROUP = 'DEMO3_ALL_ORDERS'
 
-# Bounds on how long it takes to prepare an order
-PREP_FREQ_MIN = 1.0
-PREP_FREQ_MAX = 2.0
-
-# Maximum number of lines to keep for a widget display
-MAX_LINES = 40
 
 # I'm not keen on globals, but sometimes they're convenient,
 # and they're not *quite* so bad in a program (as opposed to
@@ -84,23 +75,13 @@ global CERTS_DIR    # for the moment
 global SSL_CONTEXT  # for the moment
 
 
-class TillWidget(Widget):
+class TillWidget(DemoWidgetMixin):
 
-    lines = {}  # output lines, per till
-
-    till_number = 0
     producer = None
 
-    def __init__(self, till_number: int, name: str | None = None) -> None:
-
-        if name is None:
-            name = f'Till_{till_number}'
-
-        self.till_number = till_number
-        self.lines[till_number] = deque(maxlen=MAX_LINES)
-        super().__init__(name)
-
     async def background_task(self):
+        self.add_line(f'Starting {self.name} number {self.instance_number}')
+
         try:
             producer = aiokafka.AIOKafkaProducer(
                 bootstrap_servers=KAFKA_URI,
@@ -132,18 +113,12 @@ class TillWidget(Widget):
             self.add_line(f'Producer stopping')
             await producer.stop()
 
-    def add_line(self, text):
-        """Add a line of text to our scrolling display"""
-        self.lines[self.till_number].append(text)
-        self.refresh()
-        self.app.refresh()
-
     async def make_order(self, producer):
         """Make a new order ("from a customer")"""
         order = await new_order()
 
         order['count'] = count = await OrderNumber.get_next_order_number()
-        order['till'] = str(self.till_number)
+        order['till'] = str(self.instance_number)
 
         self.add_line(
             f'Got order {count}: {pretty_order(order)} at {datetime.now().strftime("%H:%M:%S")}'
@@ -168,20 +143,10 @@ class TillWidget(Widget):
         #
         # 3. Or I can try specifying a partition directly - this requires me to know
         #    how many partitions there are
-        await producer.send(TOPIC_NAME, value=order, partition=self.till_number-1)
+        await producer.send(TOPIC_NAME, value=order, partition=self.instance_number-1)
 
     async def on_mount(self):
         asyncio.create_task(self.background_task())
-
-    def make_text(self, height):
-        lines = list(self.lines[self.till_number])
-        # The value of 2 seems unnecessarily magical
-        # I assume it's the widget height - the panel border
-        return '\n'.join(lines[-(height-2):])
-
-    def render(self):
-        text = self.make_text(self.size.height)
-        return Panel(text, title=f'Producer (TILL {self.till_number})')
 
     async def on_shutdown(self, event: events.Shutdown) -> None:
         """Let's see if this works!"""
@@ -190,21 +155,9 @@ class TillWidget(Widget):
             self.producer = None
 
 
-class FoodPreparerWidget(Widget):
+class FoodPreparerWidget(DemoWidgetMixin):
 
-    lines = {}  # output lines, per preparer
-
-    prep_number = 0
     consumer = None
-
-    def __init__(self, prep_number: int, name: str | None = None) -> None:
-
-        if name is None:
-            name = f'Preparer_{prep_number}'
-
-        self.prep_number = prep_number
-        self.lines[prep_number] = deque(maxlen=MAX_LINES)
-        super().__init__(name)
 
     async def background_task(self):
         try:
@@ -233,9 +186,8 @@ class FoodPreparerWidget(Widget):
         self.add_line('Consumer started')
 
         try:
-            while True:
-                async for message in consumer:
-                    await self.prepare_order(message.value)
+            async for message in consumer:
+                await self.prepare_order(message.value)
         except Exception as e:
             self.add_line(f'Exception receiving message {e}')
             await consumer.stop()
@@ -257,30 +209,8 @@ class FoodPreparerWidget(Widget):
             f'Finished order {order["count"]} of {start.strftime("%H:%M:%S")} after {lapse}: {pretty_order(order)}'
             )
 
-    def add_line(self, text):
-        """Add a line of text to our scrolling display"""
-        self.lines[self.prep_number].append(text)
-        self.refresh()
-        self.app.refresh()
-
-    def change_last_line(self, text):
-        """Change the last line of text to our scrolling display"""
-        self.lines[self.prep_number][-1] = text
-        self.refresh()
-        self.app.refresh()
-
     async def on_mount(self):
         asyncio.create_task(self.background_task())
-
-    def make_text(self, height):
-        lines = list(self.lines[self.prep_number])
-        # The value of 2 seems unnecessarily magical
-        # I assume it's the widget height - the panel border
-        return '\n'.join(lines[-(height-2):])
-
-    def render(self):
-        text = self.make_text(self.size.height)
-        return Panel(text, title=f"Consumer (FOOD-PREPARER {self.prep_number})")
 
     async def on_shutdown(self, event: events.Shutdown) -> None:
         """Let's see if this works!"""
@@ -314,60 +244,13 @@ class MyGridApp(App):
         )
 
         grid.place(
-            area1=TillWidget(1),
-            area2=TillWidget(2),
-            area3=TillWidget(3),
-            area4=FoodPreparerWidget(1),
-            area5=FoodPreparerWidget(2),
+            area1=TillWidget(1, 'Till 1 producer'),
+            area2=TillWidget(2, 'Till 2 producer'),
+            area3=TillWidget(3, 'Till 3 producer'),
+            area4=FoodPreparerWidget(1, 'Food Preparer 1 consumer'),
+            area5=FoodPreparerWidget(2, 'Food Preparer 2 consumer'),
         )
 
-
-def setup_partitions(kafka_uri, ssl_context):
-    # For this we still need to use the more traditional kafka-python library
-    admin = KafkaAdminClient(
-        bootstrap_servers=KAFKA_URI,
-        security_protocol="SSL",
-        ssl_context=SSL_CONTEXT,
-    )
-
-    # First, delete the topic if it already exists.
-    # This is our so-clumsy way of making sure we don't have any data lying around
-    # from a previous run of the demo
-    print(f'Making sure topic {TOPIC_NAME} is not there')
-    try:
-        response = admin.delete_topics([TOPIC_NAME])
-        print(f'Response {response}')
-    except UnknownTopicOrPartitionError as e:
-        # If it already exists, we'll assume it has the right form
-        return
-
-    # TODO The following is icky in various ways, not least because it's not
-    # actually checking that we've deleted the topic properly, and also because
-    # we're deleting the topic as a proxy for sorting out the "please ignore old
-    # data" problem
-
-    count = 0
-    while count < 10:
-        topics = admin.list_topics()
-        print(f'Topics: {topics}')
-        if TOPIC_NAME not in topics:
-            break
-        count += 1
-        time.sleep(1)
-
-    print(f'Making sure topic {TOPIC_NAME} *is* there')
-    topic = NewTopic(name=TOPIC_NAME, num_partitions=3, replication_factor=1)
-    admin.create_topics([topic])
-    # Because we're meant to have deleted it, we shouldn't get a TopicAlreadyExistsError
-
-    count = 0
-    while count < 10:
-        topics = admin.list_topics()
-        print(f'Topics: {topics}')
-        if TOPIC_NAME in topics:
-            return
-        count += 1
-        time.sleep(1)
 
 @click.command(no_args_is_help=True)
 @click.argument('kafka_uri', required=True)
@@ -391,7 +274,7 @@ def main(kafka_uri, certs_dir):
         keyfile=CERTS_DIR / "service.key",
     )
 
-    setup_topics(KAFKA_URI, SSL_CONTEXT, {TOPIC_NAME: 1})
+    setup_topics(KAFKA_URI, SSL_CONTEXT, {TOPIC_NAME: 3})
 
     MyGridApp.run(title="Simple App", log="textual.log")
 
