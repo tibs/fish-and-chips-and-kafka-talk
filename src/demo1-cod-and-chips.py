@@ -41,7 +41,7 @@ from textual.widget import Widget
 from textual.widgets import Header, Footer, Placeholder, ScrollView
 
 
-TOPIC_NAME = 'ORDER'
+TOPIC_NAME = 'DEMO1-ORDERS'
 
 # Bounds on how often a new order occurs
 ORDER_FREQ_MIN = 1.0

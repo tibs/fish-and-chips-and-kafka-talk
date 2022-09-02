@@ -47,7 +47,7 @@ import click
 
 # We still need kafka-python for admin tasks
 from kafka.admin import KafkaAdminClient, NewTopic
-from kafka.errors import TopicAlreadyExistsError
+from kafka.errors import TopicAlreadyExistsError, UnknownTopicOrPartitionError
 
 from collections import deque
 
@@ -62,10 +62,9 @@ from textual.widget import Widget
 from textual.widgets import Header, Footer, Placeholder, ScrollView
 
 
-TOPIC_NAME = 'ORDER'
-PARTITIONED_TOPIC_NAME = 'PARTITIONED_ORDERS'
+TOPIC_NAME = 'DEMO3_ORDERS'
 
-CONSUMER_GROUP = 'ALL_ORDERS'
+CONSUMER_GROUP = 'DEMO3_ALL_ORDERS'
 
 # Bounds on how often a new order occurs
 ORDER_FREQ_MIN = 2.0
@@ -84,7 +83,6 @@ MAX_LINES = 40
 global KAFKA_URI    # for the moment
 global CERTS_DIR    # for the moment
 global SSL_CONTEXT  # for the moment
-global START_TIME   # for the moment
 
 class OrderNumber:
     """An order number that we can increment safely from different async tasks"""
@@ -212,14 +210,14 @@ class TillWidget(Widget):
         #    which partition to send the message to. This also means that the
         #    key value must deserialise as bytes, which is why we set `order['till']`
         #    to a string value above
-        #await producer.send(PARTITIONED_TOPIC_NAME, value=order, key='till')
+        #await producer.send(TOPIC_NAME, value=order, key='till')
         #
         # 2. Not specifying a key means that messages will be sent to a random partition
-        #await producer.send_and_wait(PARTITIONED_TOPIC_NAME, value=order)
+        #await producer.send_and_wait(TOPIC_NAME, value=order)
         #
         # 3. Or I can try specifying a partition directly - this requires me to know
         #    how many partitions there are
-        await producer.send(PARTITIONED_TOPIC_NAME, value=order, partition=self.till_number-1)
+        await producer.send(TOPIC_NAME, value=order, partition=self.till_number-1)
 
     async def on_mount(self):
         asyncio.create_task(self.background_task())
@@ -260,7 +258,7 @@ class FoodPreparerWidget(Widget):
     async def background_task(self):
         try:
             consumer = aiokafka.AIOKafkaConsumer(
-                PARTITIONED_TOPIC_NAME,
+                TOPIC_NAME,
                 bootstrap_servers=KAFKA_URI,
                 security_protocol="SSL",
                 ssl_context=SSL_CONTEXT,
@@ -384,11 +382,11 @@ def setup_partitions(kafka_uri, ssl_context):
     # First, delete the topic if it already exists.
     # This is our so-clumsy way of making sure we don't have any data lying around
     # from a previous run of the demo
-    print(f'Making sure topic {PARTITIONED_TOPIC_NAME} is not there')
+    print(f'Making sure topic {TOPIC_NAME} is not there')
     try:
-        response = admin.delete_topics([PARTITIONED_TOPIC_NAME])
+        response = admin.delete_topics([TOPIC_NAME])
         print(f'Response {response}')
-    except TopicAlreadyExistsError as e:
+    except UnknownTopicOrPartitionError as e:
         # If it already exists, we'll assume it has the right form
         return
 
@@ -401,13 +399,13 @@ def setup_partitions(kafka_uri, ssl_context):
     while count < 10:
         topics = admin.list_topics()
         print(f'Topics: {topics}')
-        if PARTITIONED_TOPIC_NAME not in topics:
+        if TOPIC_NAME not in topics:
             break
         count += 1
         time.sleep(1)
 
-    print(f'Making sure topic {PARTITIONED_TOPIC_NAME} *is* there')
-    topic = NewTopic(name=PARTITIONED_TOPIC_NAME, num_partitions=3, replication_factor=1)
+    print(f'Making sure topic {TOPIC_NAME} *is* there')
+    topic = NewTopic(name=TOPIC_NAME, num_partitions=3, replication_factor=1)
     admin.create_topics([topic])
     # Because we're meant to have deleted it, we shouldn't get a TopicAlreadyExistsError
 
@@ -415,7 +413,7 @@ def setup_partitions(kafka_uri, ssl_context):
     while count < 10:
         topics = admin.list_topics()
         print(f'Topics: {topics}')
-        if PARTITIONED_TOPIC_NAME in topics:
+        if TOPIC_NAME in topics:
             return
         count += 1
         time.sleep(1)
@@ -431,7 +429,6 @@ def main(kafka_uri, certs_dir):
     global KAFKA_URI    # for the moment
     global CERTS_DIR    # for the moment
     global SSL_CONTEXT  # for the moment
-    global START_TIME   # for the moment
 
     print(f'Kafka URI {kafka_uri}, certs dir {certs_dir}')
     KAFKA_URI = kafka_uri
@@ -444,8 +441,6 @@ def main(kafka_uri, certs_dir):
     )
 
     setup_partitions(KAFKA_URI, SSL_CONTEXT)
-
-    START_TIME = datetime.now()
 
     MyGridApp.run(title="Simple App", log="textual.log")
 

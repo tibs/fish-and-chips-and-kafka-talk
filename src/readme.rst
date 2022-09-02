@@ -21,6 +21,22 @@ ToDo list:
 
 * Make each demo use a different topic
 * Clear the demo topic when the demo starts (if the topic already existed)
+
+  I think the best way to do this may be:
+
+  * if the topic already exists
+  * `get the partitions`_ for the topic
+  * for each partition, `get the end offset`_
+  * for each partition, `seek`_ to that end offset
+
+  Actually, `seek_to_end`_ probably does exactly what I want (again, per partition)
+
+  We can use kafka-python for this, as we're doing it in the startup code,
+  before the Textual UI has been started.
+
+  Do I need to do manual commits to make sure this works? Probably OK if I
+  don't trigger a consumer rebalance by changing the number of partitions.
+
 * Ideally, consumers would be started before the producers started sending events
 * Write demo 4
 * Pull out *some* of the commonalities into a an importable file, but only so
@@ -38,6 +54,15 @@ ToDo list:
 * Check the handling of partitions and whether it's a python-kafka/aiokafka
   thing
 * Make this readme actually useful
+
+.. _`get the partitions`:
+   https://kafka-python.readthedocs.io/en/master/apidoc/KafkaConsumer.html#kafka.KafkaConsumer.partitions_for_topic
+.. _`get the end offset`:
+   https://kafka-python.readthedocs.io/en/master/apidoc/KafkaConsumer.html#kafka.KafkaConsumer.end_offsets
+.. _`seek`:
+   https://kafka-python.readthedocs.io/en/master/apidoc/KafkaConsumer.html#kafka.KafkaConsumer.seek
+.. _`seek_to_end`:
+   https://kafka-python.readthedocs.io/en/master/apidoc/KafkaConsumer.html#kafka.KafkaConsumer.seek_to_end
 
 Dependencies
 ============
