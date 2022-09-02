@@ -44,39 +44,16 @@ def setup_topics(kafka_uri, ssl_context, topic_dict):
         ssl_context=ssl_context,
     )
 
-    # First, delete the topic if it already exists.
-    # This is our so-clumsy way of making sure we don't have any data lying around
-    # from a previous run of the demo
-    for topic_name in topic_dict:
-        print(f'Making sure topic {topic_name} is not there')
-        try:
-            response = admin.delete_topics([topic_name])
-            print(f'Response {response}')
-        except UnknownTopicOrPartitionError:
-            # If already didn't exist, we're OK with that
-            pass
-
-    # TODO The following is icky in various ways, not least because it's not
-    # actually checking that we've deleted the topic properly, and also because
-    # we're deleting the topic as a proxy for sorting out the "please ignore old
-    # data" problem
-
-    count = 0
-    while count < 10:
-        topics = admin.list_topics()
-        print(f'Topics: {topics}')
-        if not any(x in topics for x in topic_dict.keys()):  # None of the topic names is present
-            break
-        count += 1
-        time.sleep(1)
-
     print(f'Making sure topics {", ".join(topic_dict.keys())} now exist')
     topics = [
         NewTopic(name=name, num_partitions=num_partitions, replication_factor=1)
         for name, num_partitions in topic_dict.items()
     ]
-    admin.create_topics(topics)
-    # Because we're meant to have deleted them, we shouldn't get a TopicAlreadyExistsError
+    try:
+        admin.create_topics(topics)
+    except TopicAlreadyExistsError:
+        # If the topics already exist, good
+        pass
 
     count = 0
     while count < 10:

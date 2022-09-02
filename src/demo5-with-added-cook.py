@@ -136,6 +136,13 @@ class FoodPreparerWidget(DemoWidgetMixin):
         self.add_line('Consumer started')
 
         try:
+            await consumer.seek_to_end()
+        except Exception as e:
+            self.add_line(f'Consumer seek-to-end Exception {e.__class__.__name__} {e}')
+            return
+        self.add_line('Consumer sought to end')
+
+        try:
             self.producer = aiokafka.AIOKafkaProducer(
                 bootstrap_servers=KAFKA_URI,
                 security_protocol="SSL",
@@ -225,6 +232,13 @@ class CookWidget(DemoWidgetMixin):
             self.add_line(f'Consumer start Exception {e.__class__.__name__} {e}')
             return
         self.add_line('Consumer started')
+
+        try:
+            await consumer.seek_to_end()
+        except Exception as e:
+            self.add_line(f'Consumer seek-to-end Exception {e.__class__.__name__} {e}')
+            return
+        self.add_line('Consumer sought to end')
 
         try:
             self.producer = aiokafka.AIOKafkaProducer(

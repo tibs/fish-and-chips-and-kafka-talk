@@ -8,6 +8,13 @@ Shows:
 * one of the three TILLs sends the order to the ORDER topic
 * one of the two FOOD-PREPARERs receives the order from the ORDER topic
 
+NOTE that for this demo we take care to start the producers sending events after
+the consumers are ready to listen - if we don't perform that synchronisation, the
+consumers seem to start quite a bit later than the producers, which means that
+seeking to the "current latest" event will miss some. It's probably a good thing
+to do anyway, and should probably be a part of all the demos (except we can get
+away without it in the others)
+
 Note on timing:
 
 * We want customers to make orders at perceptibly random intervals, but not so
@@ -18,8 +25,7 @@ TODO items
 
 * I still haven't figured out how to automatically send messages to partitions without
   actually specifiying the target partition number.
-* Ideally, I'd start the consumers before the producers, so I need to set up some sort
-  of synchronisation.
+
 * Stopping (by typing `q` seems to give me errors, rather than ending nicely. Probably
   because I'm not telling things to tidy up in the right way.
 
@@ -75,6 +81,17 @@ global CERTS_DIR    # for the moment
 global SSL_CONTEXT  # for the moment
 
 
+# Clumsy synchronisation so we can start producing after the consumers
+# are ready
+
+PREP_EVENTS = [asyncio.Event(), asyncio.Event()]
+
+async def wait_for_food_preparers():
+    """Wait for all three Food Preparers to be ready"""
+    for event in PREP_EVENTS:
+        await event.wait()
+
+
 class TillWidget(DemoWidgetMixin):
 
     producer = None
@@ -103,6 +120,12 @@ class TillWidget(DemoWidgetMixin):
             self.add_line(f'Producer start Exception {e.__class__.__name__} {e}')
             return
         self.add_line('Producer started')
+
+        # Wait for the food preparers to be ready for us
+        self.add_line('Waiting for food preparers')
+        waiter_task = asyncio.create_task(wait_for_food_preparers())
+        await waiter_task
+        self.add_line('Food preparers are ready')
 
         try:
             while True:
@@ -184,6 +207,18 @@ class FoodPreparerWidget(DemoWidgetMixin):
             self.add_lines(f'Consumer start Exception {e.__class__.__name__} {e}')
             return
         self.add_line('Consumer started')
+
+        try:
+            await consumer.seek_to_end()
+        except Exception as e:
+            self.add_line(f'Consumer seek-to-end Exception {e.__class__.__name__} {e}')
+            return
+        self.add_line('Consumer sought to end')
+
+        # Indicate we're ready to receive orders
+        self.add_line(f'Consumer {self.instance_number} is ready')
+        PREP_EVENTS[self.instance_number - 1].set()
+        self.add_line(f'Consumer {self.instance_number} done said it is ready')
 
         try:
             async for message in consumer:

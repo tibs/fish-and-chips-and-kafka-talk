@@ -19,29 +19,11 @@ Also, in theory
 
 ToDo list:
 
-* Clear the demo topic when the demo starts (if the topic already existed)
-
-  I think the best way to do this may be:
-
-  * if the topic already exists
-  * `get the partitions`_ for the topic
-  * for each partition, `get the end offset`_
-  * for each partition, `seek`_ to that end offset
-
-  Actually, `seek_to_end`_ probably does exactly what I want (again, per partition)
-
-  We can use kafka-python for this, as we're doing it in the startup code,
-  before the Textual UI has been started.
-
-  Do I need to do manual commits to make sure this works? Probably OK if I
-  don't trigger a consumer rebalance by changing the number of partitions.
-
-* Ideally, consumers would be started before the producers started sending events
 * Write demo 4
 * Write more comments and some discussion of how the code for a demo is
   different that that from the previous demo
-* Do something more useful to set the variables the code needs - this becomes
-  important when PG and Kafka Connect get used
+* Do something more useful to set the variables (Kafka URI, etc.) the code
+  needs - this becomes important when PG and Kafka Connect get used
 * Make the "generate orders" code produce a sequence of orders that the TILLs
   can consume in common - so as if the customer enters the shop and goes to
   the next available till. Perhaps make it its own widget so we can see the
