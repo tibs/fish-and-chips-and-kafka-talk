@@ -23,6 +23,7 @@ import asyncio
 import pathlib
 import json
 import random
+import itertools
 
 import aiokafka
 import aiokafka.helpers
@@ -55,6 +56,10 @@ ORDER_FREQ_MAX = 1.5
 # Bounds on how long it takes to prepare an order
 PREP_FREQ_MIN = 0.9
 PREP_FREQ_MAX = 1.3
+
+# Bounds on how long it takes to cook an order
+COOK_FREQ_MIN = 3.0
+COOK_FREQ_MAX = 3.2
 
 # Maximum number of lines to keep for a widget display
 MAX_LINES = 40
@@ -132,7 +137,12 @@ def pretty_order(order):
             parts.append(f'large chips')
         else:
             parts.append(' and '.join(item))
-    return ', '.join(parts)
+    description = ', '.join(parts)
+
+    if 'ready' in order and order['ready']:
+        description = f'✓ {description}'
+
+    return description
 
 
 class TillWidget(Widget):
@@ -142,21 +152,10 @@ class TillWidget(Widget):
 
     async def background_task(self):
         try:
-            context = aiokafka.helpers.create_ssl_context(
-                cafile=CERTS_DIR / "ca.pem",
-                certfile=CERTS_DIR / "service.cert",
-                keyfile=CERTS_DIR / "service.key",
-            )
-        except Exception as e:
-            self.add_line(f'Producer SSL Exception {e.__class__.__name__} {e}')
-            return
-        self.add_line('Producer SSL context acquired')
-
-        try:
             producer = aiokafka.AIOKafkaProducer(
                 bootstrap_servers=KAFKA_URI,
                 security_protocol="SSL",
-                ssl_context=context,
+                ssl_context=SSL_CONTEXT,
                 value_serializer=lambda v: json.dumps(v).encode('ascii'),
             )
         except Exception as e:
@@ -196,9 +195,6 @@ class TillWidget(Widget):
         order['count'] = count = await OrderNumber.get_next_order_number()
         order['till'] = '1'  # we only have one till
 
-        # Do we need to send this order to the COOK for them to cook plaice?
-        #if 'ready' in order and order['ready']:
-
         self.add_line(
             f'Got order {self.count}: {pretty_order(order)} at {datetime.now().strftime("%H:%M:%S")}'
         )
@@ -226,22 +222,11 @@ class FoodPreparerWidget(Widget):
 
     async def background_task(self):
         try:
-            context = aiokafka.helpers.create_ssl_context(
-                cafile=CERTS_DIR / "ca.pem",
-                certfile=CERTS_DIR / "service.cert",
-                keyfile=CERTS_DIR / "service.key",
-            )
-        except Exception as e:
-            self.add_line(f'Consumer SSL Exception {e.__class__.__name__} {e}')
-            return
-        self.add_line('Consumer SSL context acquired')
-
-        try:
             consumer = aiokafka.AIOKafkaConsumer(
                 TOPIC_NAME_ORDERS,
                 bootstrap_servers=KAFKA_URI,
                 security_protocol="SSL",
-                ssl_context=context,
+                ssl_context=SSL_CONTEXT,
                 value_deserializer = lambda v: json.loads(v.decode('ascii')),
             )
         except Exception as e:
@@ -257,6 +242,25 @@ class FoodPreparerWidget(Widget):
         self.add_line('Consumer started')
 
         try:
+            self.producer = aiokafka.AIOKafkaProducer(
+                bootstrap_servers=KAFKA_URI,
+                security_protocol="SSL",
+                ssl_context=SSL_CONTEXT,
+                value_serializer=lambda v: json.dumps(v).encode('ascii'),
+            )
+        except Exception as e:
+            self.add_line(f'Producer Exception {e.__class__.__name__} {e}')
+            return
+        self.add_line('Producer created')
+
+        try:
+            await self.producer.start()
+        except Exception as e:
+            self.add_line(f'Producer start Exception {e.__class__.__name__} {e}')
+            return
+        self.add_line('Producer started')
+
+        try:
             while True:
                 async for message in consumer:
                     await self.prepare_order(message.value)
@@ -267,19 +271,40 @@ class FoodPreparerWidget(Widget):
             self.add_line(f'Consumer stopping')
             await consumer.stop()
 
+    def all_order_available(self, order):
+        """Work out if all of the order can be prepared immediately
+
+        Note: alters the order
+        """
+
+        # If the order isn't marked "ready or not", look to see if it
+        # contains plaice. If it does, it needs that plaice to be cooked
+        if 'ready' not in order:
+            all_items = itertools.chain(*order['order'])
+            order['ready'] = 'plaice' not in all_items
+
+        return order['ready']
+
     async def prepare_order(self, order):
         """Prepare an order"""
+        order_available = self.all_order_available(order)
         start = datetime.now()
         self.add_line(
             f'Received order {order["count"]} at {datetime.now().strftime("%H:%M:%S")}: {pretty_order(order)}'
             )
 
-        await asyncio.sleep(random.uniform(PREP_FREQ_MIN, PREP_FREQ_MAX))
+        if order_available:
+            await asyncio.sleep(random.uniform(PREP_FREQ_MIN, PREP_FREQ_MAX))
 
-        lapse = str(datetime.now() - start)[5:-4]  # lost the first and last few digits
-        self.change_last_line(
-            f'Finished order {order["count"]} of {start.strftime("%H:%M:%S")} after {lapse}: {pretty_order(order)}'
-            )
+            lapse = str(datetime.now() - start)[5:-4]  # lost the first and last few digits
+            self.change_last_line(
+                f'Finished order {order["count"]} of {start.strftime("%H:%M:%S")} after {lapse}: {pretty_order(order)}'
+                )
+        else:
+            await self.producer.send(TOPIC_NAME_COOK, order)
+            self.change_last_line(
+                f'Sending order {order["count"]} of {start.strftime("%H:%M:%S")} to COOK: {pretty_order(order)}'
+                )
 
     def add_line(self, text):
         """Add a line of text to our scrolling display"""
@@ -307,6 +332,111 @@ class FoodPreparerWidget(Widget):
         return Panel(text, title="Consumer (FOOD-PREPARER)")
 
 
+class CookWidget(Widget):
+
+    count = 0
+    lines = deque(maxlen=MAX_LINES)
+
+    async def background_task(self):
+        try:
+            consumer = aiokafka.AIOKafkaConsumer(
+                TOPIC_NAME_COOK,
+                bootstrap_servers=KAFKA_URI,
+                security_protocol="SSL",
+                ssl_context=SSL_CONTEXT,
+                value_deserializer = lambda v: json.loads(v.decode('ascii')),
+            )
+        except Exception as e:
+            self.add_line(f'Consumer Exception {e.__class__.__name__} {e}')
+            return
+        self.add_line('Consumer created')
+
+        try:
+            await consumer.start()
+        except Exception as e:
+            self.add_line(f'Consumer start Exception {e.__class__.__name__} {e}')
+            return
+        self.add_line('Consumer started')
+
+        try:
+            self.producer = aiokafka.AIOKafkaProducer(
+                bootstrap_servers=KAFKA_URI,
+                security_protocol="SSL",
+                ssl_context=SSL_CONTEXT,
+                value_serializer=lambda v: json.dumps(v).encode('ascii'),
+            )
+        except Exception as e:
+            self.add_line(f'Producer Exception {e.__class__.__name__} {e}')
+            return
+        self.add_line('Producer created')
+
+        try:
+            await self.producer.start()
+        except Exception as e:
+            self.add_line(f'Producer start Exception {e.__class__.__name__} {e}')
+            return
+        self.add_line('Producer started')
+
+        try:
+            async for message in consumer:
+                await self.cook_order(message.value)
+        except Exception as e:
+            self.add_line(f'Exception receiving message {e}')
+            await producer.stop()
+        finally:
+            self.add_line(f'Consumer stopping')
+            await consumer.stop()
+
+    async def cook_order(self, order):
+        """Cook (the plaice in) an order"""
+        start = datetime.now()
+        self.add_line(
+            f'Received order {order["count"]} at {datetime.now().strftime("%H:%M:%S")}: {pretty_order(order)}'
+            )
+
+        # "Cook" the (plaice in the) order
+        await asyncio.sleep(random.uniform(COOK_FREQ_MIN, COOK_FREQ_MAX))
+
+        # It's important to remember to mark the order as ready now!
+        # (forgetting to do that means the order will keep going round the loop)
+        order['ready'] = True
+
+        lapse = str(datetime.now() - start)[5:-4]  # lost the first and last few digits
+        self.change_last_line(
+            f'Cooked order {order["count"]} of {start.strftime("%H:%M:%S")} after {lapse}: {pretty_order(order)}'
+            )
+
+        await self.producer.send(TOPIC_NAME_ORDERS, order)
+        self.add_line(
+            f'Order {order["count"]} of {start.strftime("%H:%M:%S")} available: {pretty_order(order)}'
+            )
+
+    def add_line(self, text):
+        """Add a line of text to our scrolling display"""
+        self.lines.append(text)
+        self.refresh()
+        self.app.refresh()
+
+    def change_last_line(self, text):
+        """Change the last line of text to our scrolling display"""
+        self.lines[-1] = text
+        self.refresh()
+        self.app.refresh()
+
+    async def on_mount(self):
+        asyncio.create_task(self.background_task())
+
+    def make_text(self, height):
+        lines = list(self.lines)
+        # The value of 2 seems unnecessarily magical
+        # I assume it's the widget height - the panel border
+        return '\n'.join(lines[-(height-2):])
+
+    def render(self):
+        text = self.make_text(self.size.height)
+        return Panel(text, title="Consumer (COOK)")
+
+
 class MyGridApp(App):
 
     async def on_load(self, event: events.Load) -> None:
@@ -320,15 +450,18 @@ class MyGridApp(App):
         grid.add_column('right', fraction=1, min_size=20)
 
         grid.add_row('top', fraction=1)
+        grid.add_row('bottom', fraction=1)
 
         grid.add_areas(
             area1='left,top',
             area2='right,top',
+            area3='left-start|right-end,bottom',
         )
 
         grid.place(
             area1=TillWidget(),
             area2=FoodPreparerWidget(),
+            area3=CookWidget(),
         )
 
 
