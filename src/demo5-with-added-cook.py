@@ -45,13 +45,12 @@ from textual.app import App
 from textual.widget import Widget
 from textual.widgets import Header, Footer, Placeholder, ScrollView
 
+from demo_helpers import setup_topics
+from demo_helpers import OrderNumber, new_order, pretty_order
+
 
 TOPIC_NAME_ORDERS = 'DEMO5-ORDERS'
 TOPIC_NAME_COOK = 'DEMO5-COOK'
-
-# Bounds on how often a new order occurs
-ORDER_FREQ_MIN = 1.0
-ORDER_FREQ_MAX = 1.5
 
 # Bounds on how long it takes to prepare an order
 PREP_FREQ_MIN = 0.9
@@ -69,80 +68,6 @@ MAX_LINES = 40
 # when writing a library)
 global KAFKA_URI    # for the moment
 global CERTS_DIR    # for the moment
-
-
-class OrderNumber:
-    """An order number that we can increment safely from different async tasks"""
-
-    lock = asyncio.Lock()
-    count = 0
-
-    @classmethod
-    async def get_next_order_number(cls):
-        async with cls.lock:
-            cls.count += 1
-            return cls.count
-
-
-async def new_order():
-    """Wait a random time, return a random order.
-
-    Note that it doesn't include the order number, because that can only be
-    set by the TILL receiving the order.
-    """
-
-    # Wait somewhere between 0.5 and 1 seconds (these are fast customers!)
-    await asyncio.sleep(random.uniform(ORDER_FREQ_MIN, ORDER_FREQ_MAX))
-
-    die_roll = random.randrange(6) + 1  # die have 1-6 dots :)
-    if die_roll == 6:
-        order = {
-            'order': [
-                ['cod', 'chips'],
-                ['plaice', 'chips'],
-            ]
-        }
-    elif die_roll == 5:
-        order = {
-            'order': [
-                ['cod', 'chips'],
-                ['chips', 'chips'],
-            ]
-        }
-    elif die_roll == 4:
-        order = {
-            'order': [
-                ['chips'],
-            ]
-        }
-    else:
-        order = {
-            'order': [
-                ['cod', 'chips'],
-            ]
-        }
-    return order
-
-
-def pretty_order(order):
-    """Provide a pretty representation of an order's 'order' data.
-    """
-
-    # We assume that ['chips', 'chips'] is our way of saying "a large portion
-    # of chips". We also assume that ['chips', 'chips', 'chips'] is not a thing,
-    # nor is ['cod', 'cod'], and doubtless other oddities.
-    parts = []
-    for item in order['order']:
-        if len(item) == 2 and item[0] == item[1] == 'chips':
-            parts.append(f'large chips')
-        else:
-            parts.append(' and '.join(item))
-    description = ', '.join(parts)
-
-    if 'ready' in order and order['ready']:
-        description = f'✓ {description}'
-
-    return description
 
 
 class TillWidget(Widget):
@@ -187,7 +112,7 @@ class TillWidget(Widget):
 
     async def make_order(self, producer):
         """Make a new order ("from a custoemr")"""
-        order = await new_order()
+        order = await new_order(allow_plaice=True)
 
         self.count += 1
         order['count'] = self.count
@@ -465,54 +390,6 @@ class MyGridApp(App):
         )
 
 
-def setup_partitions(kafka_uri, ssl_context):
-    # For this we still need to use the more traditional kafka-python library
-    admin = KafkaAdminClient(
-        bootstrap_servers=KAFKA_URI,
-        security_protocol="SSL",
-        ssl_context=SSL_CONTEXT,
-    )
-
-    # First, delete the topic if it already exists.
-    # This is our so-clumsy way of making sure we don't have any data lying around
-    # from a previous run of the demo
-    print(f'Making sure topic {TOPIC_NAME_ORDERS} and {TOPIC_NAME_COOK} are not there')
-    for name in (TOPIC_NAME_ORDERS, TOPIC_NAME_COOK):
-        try:
-            response = admin.delete_topics([name])
-            print(f'Response {response}')
-        except UnknownTopicOrPartitionError as e:
-            # If it already exists, we'll assume it has the right form
-            return
-
-    # TODO The following is icky in various ways, not least because it's not
-    # actually checking that we've deleted the topic properly, and also because
-    # we're deleting the topic as a proxy for sorting out the "please ignore old
-    # data" problem
-
-    count = 0
-    while count < 10:
-        topics = admin.list_topics()
-        print(f'Topics: {topics}')
-        if TOPIC_NAME_ORDERS not in topics and TOPIC_NAME_COOK not in topics:
-            break
-        count += 1
-        time.sleep(1)
-
-    print(f'Making sure topic {TOPIC_NAME_ORDERS} and {TOPIC_NAME_COOK} *are* there')
-    topic1 = NewTopic(name=TOPIC_NAME_ORDERS, num_partitions=1, replication_factor=1)
-    topic2 = NewTopic(name=TOPIC_NAME_COOK, num_partitions=1, replication_factor=1)
-    admin.create_topics([topic1, topic2])
-    # Because we're meant to have deleted them, we shouldn't get a TopicAlreadyExistsError
-
-    count = 0
-    while count < 10:
-        topics = admin.list_topics()
-        print(f'Topics: {topics}')
-        if TOPIC_NAME_ORDERS in topics and TOPIC_NAME_COOK in topics:
-            return
-        count += 1
-        time.sleep(1)
 
 
 @click.command(no_args_is_help=True)
@@ -537,7 +414,7 @@ def main(kafka_uri, certs_dir):
         keyfile=CERTS_DIR / "service.key",
     )
 
-    setup_partitions(KAFKA_URI, SSL_CONTEXT)
+    setup_topics(KAFKA_URI, SSL_CONTEXT, {TOPIC_NAME_ORDERS: 1, TOPIC_NAME_COOK: 1})
 
     MyGridApp.run(title="Simple App", log="textual.log")
 

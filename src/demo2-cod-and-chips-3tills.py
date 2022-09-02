@@ -42,12 +42,11 @@ from textual.app import App
 from textual.widget import Widget
 from textual.widgets import Header, Footer, Placeholder, ScrollView
 
+from demo_helpers import setup_topics
+from demo_helpers import OrderNumber, new_order, pretty_order
+
 
 TOPIC_NAME = 'DEMO2-ORDERS'
-
-# Bounds on how often a new order occurs
-ORDER_FREQ_MIN = 1.0
-ORDER_FREQ_MAX = 1.5
 
 # Bounds on how long it takes to prepare an order
 PREP_FREQ_MIN = 0.9
@@ -61,55 +60,6 @@ MAX_LINES = 40
 # when writing a library)
 global KAFKA_URI    # for the moment
 global CERTS_DIR    # for the moment
-
-
-class OrderNumber:
-    """An order number that we can increment safely from different async tasks"""
-
-    lock = asyncio.Lock()
-    count = 0
-
-    @classmethod
-    async def get_next_order_number(cls):
-        async with cls.lock:
-            cls.count += 1
-            return cls.count
-
-
-async def new_order():
-    """Wait a random time, return a random order.
-
-    Note that it doesn't include the order number, because that can only be
-    set by the TILL receiving the order.
-    """
-
-    # Wait somewhere between 0.5 and 1 seconds (these are fast customers!)
-    await asyncio.sleep(random.uniform(ORDER_FREQ_MIN, ORDER_FREQ_MAX))
-
-    # For the moment, our random order is always the same...
-    order = {
-        'order': [
-            ['cod', 'chips'],
-            ['chips', 'chips'],
-        ]
-    }
-    return order
-
-
-def pretty_order(order):
-    """Provide a pretty representation of an order's 'order' data.
-    """
-
-    # We assume that ['chips', 'chips'] is our way of saying "a large portion
-    # of chips". We also assume that ['chips', 'chips', 'chips'] is not a thing,
-    # nor is ['cod', 'cod'], and doubtless other oddities.
-    parts = []
-    for item in order['order']:
-        if len(item) == 2 and item[0] == item[1] == 'chips':
-            parts.append(f'large chips')
-        else:
-            parts.append(' and '.join(item))
-    return ', '.join(parts)
 
 
 class TillWidget(Widget):
@@ -307,6 +257,8 @@ def main(kafka_uri, certs_dir):
         certfile=CERTS_DIR / "service.cert",
         keyfile=CERTS_DIR / "service.key",
     )
+
+    setup_topics(KAFKA_URI, SSL_CONTEXT, {TOPIC_NAME: 1})
 
     MyGridApp.run(title="Simple App", log="textual.log")
 

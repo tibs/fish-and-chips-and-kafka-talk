@@ -40,12 +40,11 @@ from textual.app import App
 from textual.widget import Widget
 from textual.widgets import Header, Footer, Placeholder, ScrollView
 
+from demo_helpers import setup_topics
+from demo_helpers import new_order, pretty_order
+
 
 TOPIC_NAME = 'DEMO1-ORDERS'
-
-# Bounds on how often a new order occurs
-ORDER_FREQ_MIN = 1.0
-ORDER_FREQ_MAX = 1.5
 
 # Bounds on how long it takes to prepare an order
 PREP_FREQ_MIN = 0.9
@@ -59,42 +58,7 @@ MAX_LINES = 40
 # when writing a library)
 global KAFKA_URI    # for the moment
 global CERTS_DIR    # for the moment
-
-
-async def new_order():
-    """Wait a random time, return a random order.
-
-    Note that it doesn't include the order number, because that can only be
-    set by the TILL receiving the order.
-    """
-
-    # Wait somewhere between 0.5 and 1 seconds (these are fast customers!)
-    await asyncio.sleep(random.uniform(ORDER_FREQ_MIN, ORDER_FREQ_MAX))
-
-    # For the moment, our random order is always the same...
-    order = {
-        'order': [
-            ['cod', 'chips'],
-            ['chips', 'chips'],
-        ]
-    }
-    return order
-
-
-def pretty_order(order):
-    """Provide a pretty representation of an order's 'order' data.
-    """
-
-    # We assume that ['chips', 'chips'] is our way of saying "a large portion
-    # of chips". We also assume that ['chips', 'chips', 'chips'] is not a thing,
-    # nor is ['cod', 'cod'], and doubtless other oddities.
-    parts = []
-    for item in order['order']:
-        if len(item) == 2 and item[0] == item[1] == 'chips':
-            parts.append(f'large chips')
-        else:
-            parts.append(' and '.join(item))
-    return ', '.join(parts)
+global SSL_CONTEXT  # for the moment
 
 
 class TillWidget(Widget):
@@ -104,21 +68,10 @@ class TillWidget(Widget):
 
     async def background_task(self):
         try:
-            context = aiokafka.helpers.create_ssl_context(
-                cafile=CERTS_DIR / "ca.pem",
-                certfile=CERTS_DIR / "service.cert",
-                keyfile=CERTS_DIR / "service.key",
-            )
-        except Exception as e:
-            self.lines.append(f'Producer SSL Exception {e.__class__.__name__} {e}')
-            return
-        self.lines.append('Producer SSL context acquired')
-
-        try:
             producer = aiokafka.AIOKafkaProducer(
                 bootstrap_servers=KAFKA_URI,
                 security_protocol="SSL",
-                ssl_context=context,
+                ssl_context=SSL_CONTEXT,
                 value_serializer=lambda v: json.dumps(v).encode('ascii'),
             )
         except Exception as e:
@@ -183,22 +136,11 @@ class FoodPreparerWidget(Widget):
 
     async def background_task(self):
         try:
-            context = aiokafka.helpers.create_ssl_context(
-                cafile=CERTS_DIR / "ca.pem",
-                certfile=CERTS_DIR / "service.cert",
-                keyfile=CERTS_DIR / "service.key",
-            )
-        except Exception as e:
-            self.lines.append(f'Consumer SSL Exception {e.__class__.__name__} {e}')
-            return
-        self.lines.append('Consumer SSL context acquired')
-
-        try:
             consumer = aiokafka.AIOKafkaConsumer(
                 TOPIC_NAME,
                 bootstrap_servers=KAFKA_URI,
                 security_protocol="SSL",
-                ssl_context=context,
+                ssl_context=SSL_CONTEXT,
                 value_deserializer = lambda v: json.loads(v.decode('ascii')),
             )
         except Exception as e:
@@ -293,9 +235,19 @@ def main(kafka_uri, certs_dir):
 
     global KAFKA_URI    # for the moment
     global CERTS_DIR    # for the moment
+    global SSL_CONTEXT  # for the moment
+
     print(f'Kafka URI {kafka_uri}, certs dir {certs_dir}')
     KAFKA_URI = kafka_uri
     CERTS_DIR = pathlib.Path(certs_dir)
+
+    SSL_CONTEXT = aiokafka.helpers.create_ssl_context(
+        cafile=CERTS_DIR / "ca.pem",
+        certfile=CERTS_DIR / "service.cert",
+        keyfile=CERTS_DIR / "service.key",
+    )
+
+    setup_topics(KAFKA_URI, SSL_CONTEXT, {TOPIC_NAME: 1})
 
     MyGridApp.run(title="Simple App", log="textual.log")
 
