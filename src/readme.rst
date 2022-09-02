@@ -4,6 +4,41 @@ Demo for "Fish and Chips and Apache Kafka®" talk
 
 *Why no, it's not even remotely ready yet!*
 
+Plan:
+
+* Demo 1 - simplest demo
+* Demo 2 - adds extra tills
+* Demo 3 - adds extra preparers
+* Demo 4 - (not started) adds data going to PG and analysis
+* Demo 5 - based on 1, adds the cook
+
+Also, in theory
+
+* Demo 6 - (homework! - doesn't exist) based on 5, uses Redis to model the hot cabinet
+* Demo 7 - (also doesn't exist) pulls all the others into one single demo
+
+ToDo list:
+
+* Make each demo use a different topic
+* Clear the demo topic when the demo starts (if the topic already existed)
+* Ideally, consumers would be started before the producers started sending events
+* Write demo 4
+* Pull out *some* of the commonalities into a an importable file, but only so
+  far as it helps understanding the code.
+* Generally make the code tidier and more readable.
+* That includes more comments and some discussion of how the code for a demo
+  is different that that from the previous demo
+* Do something more useful to set the variables the code needs - this becomes
+  important when PG and Kafka Connect get used
+* Make the "generate orders" code generate different orders!
+* Make the "generate orders" code produce a sequence of orders that the TILLs
+  can consume in common - so as if the customer enters the shop and goes to
+  the next available till. Perhaps make it its own widget so we can see the
+  number of customers waiting.
+* Check the handling of partitions and whether it's a python-kafka/aiokafka
+  thing
+* Make this readme actually useful
+
 Dependencies
 ============
 
