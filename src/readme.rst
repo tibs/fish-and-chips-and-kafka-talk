@@ -42,6 +42,16 @@ ToDo list:
 * Pull out *some* of the commonalities into a an importable file, but only so
   far as it helps understanding the code.
 * Generally make the code tidier and more readable.
+* Specifically, I seem to have written:
+
+  .. code:: python
+
+            while True:
+                async for message in consumer:
+                    await self.prepare_order(message.value)
+
+  and surely that `while True` is redundant?
+
 * That includes more comments and some discussion of how the code for a demo
   is different that that from the previous demo
 * Do something more useful to set the variables the code needs - this becomes
