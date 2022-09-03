@@ -64,10 +64,8 @@ Enter, Apache Kafka®
 
 .. Actually give the high-level explanation of what Kafka *is*
 
-Kafka explanation, part 1
--------------------------
-
-*Add pictures!*
+Kafka terms
+-----------
 
 Messages are *Events*
 
@@ -76,15 +74,64 @@ Can have multiple *Producers* and *Consumers*
 A Producer send a message to a named *Topic*,
 each Consumer reads from one Topic
 
+*Partitions* can be used to "spread the load" within a Topic
+
+
+Kafka explanation, part 1
+-------------------------
+
+::
+
+  Producer -> Topic -> Consumer
+
+  [1,2,3]     [1,2,3]  [1,2,3]
+
+
 Kafka explanation, part 2
 -------------------------
 
-*Add pictures!*
+Multiple producers can write to the same topic.
+Events interleave.
 
-*Partitions* can be used to "spread the load" within a Topic
+Multiple consumers can read from the same topic.
+See the same events.
+
+::
+
+  Producer1
+  [1,2,3]
+            -> Topic -> Consumer1, Consumer2
+  Producer2
+  [a,b,c]      [1,2,a,3,b,c]  ...
+
+Kafka explanation, part 3
+-------------------------
+
+Producer can write to more than one topic - chooses per ``send``
+
+Kafka explanation, part 4
+-------------------------
+
+Scale by adding *partitions* to a topic
+
+Producer sends event to topic - event goes to topic: randomly, based on hash
+of key, by explicit choice in ``send``
+
+Consumer receives from ???
 
   Messages go to a partition based on their *Key*, and Consumers read from one or
   more partitions in their chosen Topic
+
+Consumer groups
+---------------
+
+Given multiple partitions, consumers in the same consumer group will get
+events from different partitions. So the events are shared between the
+consumers.
+
+Show two consumers in the same group (sharing messages) and one that is not
+(getting all the messages)
+
 
 Let's model a fish-and-chip shop
 --------------------------------
@@ -338,6 +385,20 @@ Show demo: multiple TILLs and multiple FOOD-PREPARERS
   TILL                             > FOOD-PERPARER
 
 
+Start consuming from a specific offset
+--------------------------------------
+
+*If I run a demo more than once, there's a chance that a consumer might
+receive events from the previous demo. So we want to make sure that doesn't
+happen.*
+
+*Various solutions - simplest for this case is to do:*
+
+.. code:: python
+
+    await consumer.seek_to_end()
+
+
 Cod or plaice
 -------------
 
@@ -397,7 +458,7 @@ Code changes to add COOK
 ... see the notes on this
 
 ..
-   * All orders have a "ready" boolean, which is initially set to False
+   ** All orders have a "ready" boolean, which is initially set to False
    * The PREPARER gets the ORDER
 
      * If the order has "ready" set to True, then everything is available from
@@ -428,8 +489,17 @@ Show demo of (simple) cod-and-chips order, with COOK
    isn't too complicated to explain
 
 
-Adding the ANALYST
-------------------
+Summary so far
+--------------
+
+We know how to model the ordering and serving of our cod and chips
+
+We know how to scale with multiple Producers and Consumers
+
+We made a simple model for orders with plaice
+
+Homework: Adding the ANALYST
+----------------------------
 
 ::
 
@@ -442,96 +512,75 @@ Adding the ANALYST
    isn't too complicated to explain. Show some query result from the PG databse
    being updated - perhaps just total number of orders.
 
-Two ways to do the ANALYST
---------------------------
+..
+   Two ways to do the ANALYST
+   --------------------------
 
-1. Add a new (independent) consumer of [ORDER], and have them write to
-   PostgreSQL®
+   1. Add a new (independent) consumer of [ORDER], and have them write to
+      PostgreSQL®
 
-2. Use an Apache Kafka® Connector to connect the [ORDER] topic to PostgreSQL
-   without needing to alter the Python code
+   2. Use an Apache Kafka® Connector to connect the [ORDER] topic to PostgreSQL
+      without needing to alter the Python code
 
-If I do (1), then we get to choose when to start the ANALYST consuming, and I
-can do the toggle to start it. But (2) introduces something nice to know
-about, and is probably more realistic.
+   If I do (1), then we get to choose when to start the ANALYST consuming, and I
+   can do the toggle to start it. But (2) introduces something nice to know
+   about, and is probably more realistic.
 
-(Option 1) What we need to do in the code
------------------------------------------
+   (Option 1) What we need to do in the code
+   -----------------------------------------
 
-... *add code for ANALYST consumer, and make it write to PG*
+   ... *add code for ANALYST consumer, and make it write to PG*
 
-... *add code to read some sort of statistic from PG and report as it changes*
+   ... *add code to read some sort of statistic from PG and report as it changes*
 
-(Option 1) Demo with ANALYST
-----------------------------
+   (Option 1) Demo with ANALYST
+   ----------------------------
 
-::
+   ::
 
-  TILL -> [ORDER] -> FOOD-PREPARER
-                  \
-                   +-> ANALYST -> PG
+     TILL -> [ORDER] -> FOOD-PREPARER
+                     \
+                      +-> ANALYST -> PG
 
-*Maybe with a toggle button to start the ANALYST*
+   *Maybe with a toggle button to start the ANALYST*
 
-(Option 2) Apache Kafka Connectors
-----------------------------------
+Apache Kafka Connectors
+-----------------------
 
 These make it easier to connect Kafka to databases, OpenSearch, etc., without
 needing to write Python (or whatever) code.
 
 We shall use this to add our ANALYST
 
-(Option 2) What we need to do in the code
------------------------------------------
+How we would do it
+------------------
 
-... *add code to *read* some sort of statistic from PG and report as it changes*
+* Create PG table
+* Create Kafka Connector
+* Link it up
+* Add code to the demo to query PG and update a panel
 
-(Option 2) Setting up the PostgreSQL table
-------------------------------------------
+Setting up the PostgreSQL table
+-------------------------------
 
 ... we assume there's already a database
 
 ... we need to define the necessary table
 
-(Option 2) Setting up the Kafka Connector
------------------------------------------
+Setting up the Kafka Connector
+------------------------------
 
 ...
 
-(Option 2) Demo with ANALYST
-----------------------------
+..
+   Demo with ANALYST
+   -----------------
 
-::
+   ::
 
-  TILL -> [ORDER] -> FOOD-PREPARER
-                  \
-                   +-> ANALYST -> PG
-
-
-Start consuming from a specific offset
---------------------------------------
-
-.. This is probably not going to be in the demo, but I should make sure to
-   talk about how to do it, given I said I would in the talk Introduction
-
-*To be added: talking about starting at other offsets*
-
-... to make the new participants start from the start of the events
-
-.. code:: python
-
-        auto_offset_reset="earliest",
-
-(the default is `"latest"`)
-
-Summary so far
---------------
-
-We know how to model the ordering and serving of our cod and chips
-
-We know how to share the order information with other data users
-
-We know how to scale with multiple Producers and Consumers
+     TILL -> [ORDER] -> FOOD-PREPARER
+                     \
+                      +-> ANALYST -> PG
 
 
 Homework: Sophisticated model, with caching
@@ -542,8 +591,8 @@ Use a Redis cache to simulate the hot cabinet
 Redis has entries for the hot cabinet content, keyed by ``cod``, (portions of)
 ``chips`` and ``plaice``. We start with 0 for all of them.
 
-Homework continued
-------------------
+Using the cache
+---------------
 
 PRODUCER compares the order to the counts in the cache. If there's enough
 "stuff" to make the order up, decrements the cache appropriately, and that's
@@ -566,9 +615,9 @@ We know how to model the ordering and serving of our cod and chips
 
 We know how to scale with multiple Producers and Consumers
 
-We know how to share the order information with other data users
+We made a simple model for orders with plaice
 
-We had a brief look at modelling "plaice" orders
+We talked briefly about using Kafka Connectors to share data with other data users
 
 We talked briefly about how one might model the hot cabinet in more detail
 

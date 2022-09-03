@@ -109,10 +109,15 @@ I want to tell you about today."""
 
 * demo 1 - simple TILL -> FOOD-PREPARER
 * demo 2 - 3 tills, one preparer who can't keep up
-* demo 3 - 2 tills, two (or maybe three) preparers who can keep up, but using
-  partitions to organise who gets what (not just till-1 -> preperer-1)
-* demo 4 - show the COOK loop. Maybe based on demo 1, for simplicity
-* demo 5 - demo 3 + demo 4
+* demo 3 - 2 tills, two (or maybe three) preparers who can keep up, using
+  partitions
+* demo 4 - show the COOK loop. Based on demo 1, for simplicity
+* demo 5 - would add a Kafka Connector to PG, and show some sort of statistic
+  from a PG query.
+* demo 6 - homework - the Redis cache
+
+Note: I think it's quite possible there won't be time to *show* demo 5, so
+it may just be something to talk about, like the Redis cache.
 
 NB: implement "while SHOP_IS_OPEN" checking for the Producer loops, where
 ``q`` unsets that value. Then make sure the Consumers drain the orders -
