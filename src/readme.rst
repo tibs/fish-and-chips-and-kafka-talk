@@ -9,8 +9,8 @@ Plan:
 * Demo 1 - simplest demo
 * Demo 2 - adds extra tills
 * Demo 3 - adds extra preparers
-* Demo 4 - (not started) adds data going to PG and analysis
-* Demo 5 - based on 1, adds the cook
+* Demo 4 - based on 1, adds the cook
+* Demo 5 - (not started) based on 1, adds data going to PG and analysis
 
 Also, in theory
 
@@ -19,7 +19,7 @@ Also, in theory
 
 ToDo list:
 
-* Write demo 4
+* Write demo 5
 * Write more comments and some discussion of how the code for a demo is
   different that that from the previous demo
 * Do something more useful to set the variables (Kafka URI, etc.) the code

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""demo2-cod-and-chips-3tills.py - the second demonstration for my talk "Fish and Chips and Apache Kafka®"
+"""demo2-cod-and-chips-3tills.py - a demonstration for the talk "Fish and Chips and Apache Kafka®"
 
 Shows:
 

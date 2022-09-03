@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""demo5-with-added-cook.py - the first demonstration for my talk "Fish and Chips and Apache Kafka®"
+"""demo4-with-added-cook.py - a demonstration for the talk "Fish and Chips and Apache Kafka®"
 
 Shows:
 
