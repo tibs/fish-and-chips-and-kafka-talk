@@ -6,7 +6,8 @@ A talk entitled "Fish and Chips and Apache Kafka®"
 
 .. ------------------------------------------
 
-*Which is very definitely not ready yet*
+*The slides are nearly there, the demo programs work, but I've yet to update
+the readme for the demos.*
 
 .. ------------------------------------------
 
@@ -95,23 +96,24 @@ The demo
 The source code for the demonstration program is in the `src <src/>`_ directory. See
 the `readme.rst <src/readme.rst>`_ for how to run it.
 
-The slide notes
-~~~~~~~~~~~~~~~
+..
+   The slide notes
+   ~~~~~~~~~~~~~~~
 
-There are also notes for the slides. They were part of my process in producing
-the slides, so may not be a great deal of use to others.
+   There are also notes for the slides. They were part of my process in producing
+   the slides, so may not be a great deal of use to others.
 
-  (The notes may continue to change until after `PyCon UK 2022`_.)
+     (The notes may continue to change until after `PyCon UK 2022`_.)
 
-The sources for the notes are in `<notes.rst>`_
+   The sources for the notes are in `<notes.rst>`_
 
-Note that github will present the ``.rst`` files in rendered form as HTML,
-albeit using their own styling (which is occasionally a bit odd). If you want
-to see the original reStructuredText source, you have to click on the "Raw"
-link at the top of the file's page.
+   Note that github will present the ``.rst`` files in rendered form as HTML,
+   albeit using their own styling (which is occasionally a bit odd). If you want
+   to see the original reStructuredText source, you have to click on the "Raw"
+   link at the top of the file's page.
 
-For convenience, there will also be a PDF rendering of the notes,
-`<notes.pdf>`_
+   For convenience, there will also be a PDF rendering of the notes,
+   `<notes.pdf>`_
 
 Making the PDF files
 ~~~~~~~~~~~~~~~~~~~~
