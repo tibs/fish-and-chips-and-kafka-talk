@@ -16,12 +16,12 @@ This is a talk for presentation at `PyCon UK 2022`_,
 It will be presented live, but I expect a video to be made of the session, and
 will update this README with a link when it is available.
 
-It will (probably) also be presented beforehand as a live talk at CamPUG_
-on 6th September 2022 - a link to the meetup page will also be added when
-possible.
+It will also be presented beforehand as a live talk at CamPUG_
+on `6th September 2022`_.
 
 .. _`PyCon UK 2022`: https://2022.pyconuk.org/
 .. _CamPUG: https://www.meetup.com/CamPUG/
+.. _`6th September 2022`: https://www.meetup.com/campug/events/288163944/
 
   *Apache Kafka is either a registered trademark or a trademark of the Apache
   Software Foundation in the United States and/or other countries*
