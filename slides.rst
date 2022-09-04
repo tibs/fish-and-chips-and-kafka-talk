@@ -313,15 +313,16 @@ An order with multiple TILLs
 How we alter the code
 ---------------------
 
-*Correct this once I know what I'm actually using in the demo*
+When creating the topic for the demo, request 3 partitions:
 
 .. code:: python
 
-        #await producer.send(PARTITIONED_TOPIC_NAME, value=order, key='till')
+    NewTopic(name='DEMO2-ORDERS', num_partitions=3_partitions,
+             replication_factor=1)
 
-        #await producer.send_and_wait(PARTITIONED_TOPIC_NAME, value=order)
+Create 3 Till producers instead of 1
 
-        await producer.send(PARTITIONED_TOPIC_NAME, value=order, partition=self.till_number-1)
+.. Consider a screen shot to show we've got 3 partitions in use
 
 Show demo: multiple TILLs
 -------------------------
@@ -343,7 +344,8 @@ Show demo: multiple TILLs
 But now the FOOD-PREPARER is too busy
 -------------------------------------
 
-So add multiple *consumers*
+Add multiple *consumers*
+------------------------
 
 .. image:: images/demo3-3preparers.svg
    :width: 100%
@@ -360,7 +362,33 @@ So add multiple *consumers*
 How we alter the code
 ---------------------
 
-...
+Send to different partitions
+
+.. code:: python
+
+    await producer.send(TOPIC_NAME, value=order, partition=self.instance_number-1)
+
+Consumers need to be in same *consumer group*
+
+.. code:: python
+
+    consumer = aiokafka.AIOKafkaConsumer(
+       ...
+       group_id=CONSUMER_GROUP,
+       ...
+
+Start consuming from a specific offset
+--------------------------------------
+
+*If I run a demo more than once, there's a chance that a consumer might
+receive events from the previous demo. So we want to make sure that doesn't
+happen.*
+
+Various solutions - simplest for this case is to do:
+
+.. code:: python
+
+    await consumer.seek_to_end()
 
 
 Show demo: multiple TILLs and multiple FOOD-PREPARERS
@@ -379,21 +407,6 @@ Show demo: multiple TILLs and multiple FOOD-PREPARERS
 
 .. image:: images/demo3-3preparers.svg
    :width: 100%
-
-
-Start consuming from a specific offset
---------------------------------------
-
-*If I run a demo more than once, there's a chance that a consumer might
-receive events from the previous demo. So we want to make sure that doesn't
-happen.*
-
-*Various solutions - simplest for this case is to do:*
-
-.. code:: python
-
-    await consumer.seek_to_end()
-
 
 Cod or plaice
 -------------
@@ -459,7 +472,35 @@ Gets turned into...
 Code changes to add COOK
 ------------------------
 
-... see the notes on this
+.. code:: python
+
+    def all_order_available(self, order):
+        if 'ready' not in order:
+            all_items = itertools.chain(*order['order'])
+            order['ready'] = 'plaice' not in all_items
+
+.. code:: python
+
+        order_available = self.all_order_available(order)
+        if order_available:
+            await asyncio.sleep(random.uniform(PREP_FREQ_MIN, PREP_FREQ_MAX))
+            # Say order is finished
+        else:
+            await self.producer.send(TOPIC_NAME_COOK, order)
+
+In the Cook
+-----------
+
+.. code:: python
+
+   async for message in consumer:
+      ...
+      # "Cook" the (plaice in the) order
+      await asyncio.sleep(random.uniform(COOK_FREQ_MIN, COOK_FREQ_MAX))
+      # It's important to remember to mark the order as ready now!
+      # (forgetting to do that means the order will keep going round the loop)
+      order['ready'] = True
+      await self.producer.send(TOPIC_NAME_ORDERS, order)
 
 ..
    ** All orders have a "ready" boolean, which is initially set to False
@@ -505,8 +546,8 @@ We know how to scale with multiple Producers and Consumers
 
 We made a simple model for orders with plaice
 
-Homework: Adding the ANALYST
-----------------------------
+Homework 1: Adding the ANALYST
+------------------------------
 
    .. raw:: pdf
 
@@ -582,27 +623,19 @@ Apache Kafka Connectors
 These make it easier to connect Kafka to databases, OpenSearch, etc., without
 needing to write Python (or whatever) code.
 
-We shall use this to add our ANALYST
+How I would do it
+-----------------
 
-How we would do it
-------------------
+The Aiven developer documentation
+has instructions on how to do this at
+https://docs.aiven.io/docs/products/kafka/kafka-connect/howto/jdbc-sink.html
 
-* Create PG table
-* Create Kafka Connector
-* Link it up
-* Add code to the demo to query PG and update a panel
+* Create an appropriate PostgreSQL database and table
+* Make sure that the Kafka service has Kafka Connect enabled
+* Use the Aiven web console to setup the new connector
 
-Setting up the PostgreSQL table
--------------------------------
-
-... we assume there's already a database
-
-... we need to define the necessary table
-
-Setting up the Kafka Connector
-------------------------------
-
-...
+And then add code to the Python demo to query PostgreSQL and make some sort of
+report over time.
 
 ..
    Demo with ANALYST
@@ -615,10 +648,10 @@ Setting up the Kafka Connector
                       +-> ANALYST -> PG
 
 
-Homework: Sophisticated model, with caching
--------------------------------------------
+Homework 2: Model cooking the fish and chips
+--------------------------------------------
 
-Use a Redis cache to simulate the hot cabinet
+Use a Redis cache to simulate contents of the hot cabinet
 
 Redis has entries for the hot cabinet content, keyed by ``cod``, (portions of)
 ``chips`` and ``plaice``. We start with 0 for all of them.

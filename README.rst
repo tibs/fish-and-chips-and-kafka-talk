@@ -26,18 +26,44 @@ possible.
   *Apache Kafka is either a registered trademark or a trademark of the Apache
   Software Foundation in the United States and/or other countries*
 
-Links mentioned in the slides
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Useful links
+~~~~~~~~~~~~
 
-For your convenience, these are the links mentioned in the slides:
+These are the links mentioned in the slides, and also some other links that
+may be of interest.
 
 * Aiven_, where I work, and our developer documentation at
   https://docs.aiven.io/ and https://github.com/aiven/devportal
 * Get a free trial of Aiven services at https://console.aiven.io/signup/email
 * Aiven is hiring. See https://aiven.io/careers
-* ... to be continued ...
+
+and also:
+
+* `Apache Kafka® simply explained`_ on the Aiven blog, for a friendly
+  explanation of the Apache Kafka fundamentals
+
+* `Teach yourself Apache Kafka® and Python with a Jupyter notebook`_ on the
+  Aiven blog. The Jupyter notebook referenced is at
+  https://github.com/aiven/python-notebooks-for-apache-kafka
+
+* `Create a JDBC sink connector`_ in the Aiven developer documentation shows
+  how to setup Kafka Connect using the Aiven web console, and is thus useful
+  for the "homework" on using Kafka Connect to output data to PostgreSQL.
 
 .. _Aiven: https://aiven.io/
+.. _`Apache Kafka® simply explained`: https://aiven.io/blog/kafka-simply-explained
+.. _`Teach yourself Apache Kafka® and Python with a Jupyter notebook`:
+   https://aiven.io/blog/teach-yourself-apache-kafka-and-python-with-a-jupyter-notebook
+.. _`Create a JDBC sink connector:
+   https://docs.aiven.io/docs/products/kafka/kafka-connect/howto/jdbc-sink.html
+
+Lastly, but definitely not least, `The Log: What every software engineer
+should know about real-time data's unifying abstraction`_ is the 2013 paper by
+Jay Kreps that explains the concepts behind Kafka. It is very worth a read.
+
+
+.. _`The Log: What every software engineer should know about real-time data's unifying abstraction`:
+   https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying
 
 The slides
 ~~~~~~~~~~
@@ -112,6 +138,16 @@ Makefile.
 .. _CamPUG: https://www.meetup.com/CamPUG/
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
 
+--------
+
+Apache,
+Apache Kafka,
+Kafka,
+and the Kafka logo
+are either registered trademarks or trademarks of the Apache Software Foundation in the United States and/or other countries
+
+Postgres and PostgreSQL are trademarks or registered trademarks of the
+PostgreSQL Community Association of Canada, and used with their permission
 
 --------
 
