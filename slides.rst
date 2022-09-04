@@ -64,74 +64,54 @@ Enter, Apache Kafka®
 
 .. Actually give the high-level explanation of what Kafka *is*
 
+.. image:: images/kafka-logo-wide.png
+   :width: 60%
+
+
 Kafka terms
 -----------
 
 Messages are *Events*
 
-Can have multiple *Producers* and *Consumers*
+*Producers* send messages, *Consumers* read them.
+
+Can have multiple Producers and Consumers
 
 A Producer send a message to a named *Topic*,
-each Consumer reads from one Topic
+each Consumer reads from a single Topic
 
 *Partitions* can be used to "spread the load" within a Topic
 
+Producers, topics, consumers
+----------------------------
 
-Kafka explanation, part 1
--------------------------
+.. raw:: pdf
 
-::
+   Spacer 0 30
 
-  Producer -> Topic -> Consumer
-
-  [1,2,3]     [1,2,3]  [1,2,3]
+.. image:: images/kafka1-overview.svg
+   :width: 100%
 
 
-Kafka explanation, part 2
--------------------------
+Events
+------
 
-Multiple producers can write to the same topic.
-Events interleave.
+.. image:: images/kafka2-overview.svg
+   :width: 80%
 
-Multiple consumers can read from the same topic.
-See the same events.
 
-::
+Multiple produces, multiple consumers
+-------------------------------------
 
-  Producer1
-  [1,2,3]
-            -> Topic -> Consumer1, Consumer2
-  Producer2
-  [a,b,c]      [1,2,a,3,b,c]  ...
+.. image:: images/kafka3-overview.svg
+   :width: 80%
 
-Kafka explanation, part 3
--------------------------
 
-Producer can write to more than one topic - chooses per ``send``
+Multiple partitions, consumer groups
+------------------------------------
 
-Kafka explanation, part 4
--------------------------
-
-Scale by adding *partitions* to a topic
-
-Producer sends event to topic - event goes to topic: randomly, based on hash
-of key, by explicit choice in ``send``
-
-Consumer receives from ???
-
-  Messages go to a partition based on their *Key*, and Consumers read from one or
-  more partitions in their chosen Topic
-
-Consumer groups
----------------
-
-Given multiple partitions, consumers in the same consumer group will get
-events from different partitions. So the events are shared between the
-consumers.
-
-Show two consumers in the same group (sharing messages) and one that is not
-(getting all the messages)
-
+.. image:: images/kafka4-overview.svg
+   :width: 75%
 
 Let's model a fish-and-chip shop
 --------------------------------
@@ -705,6 +685,7 @@ Acknowledgements
 Apache,
 Apache Kafka,
 Kafka,
+and the Kafka logo
 are either registered trademarks or trademarks of the Apache Software Foundation in the United States and/or other countries
 
 Postgres and PostgreSQL are trademarks or registered trademarks of the
