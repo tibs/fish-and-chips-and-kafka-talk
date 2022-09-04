@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="240 217 461 204" width="461" height="204">
+  <defs/>
+  <g id="Canvas_1" fill="none" fill-opacity="1" stroke="none" stroke-opacity="1" stroke-dasharray="none">
+    <title>Canvas 1</title>
+    <rect fill="white" x="240" y="217" width="461" height="204"/>
+    <g id="Canvas_1_Layer_1">
+      <title>Layer 1</title>
+      <g id="Graphic_5">
+        <rect x="240.5" y="217.5" width="104.5" height="107.5" fill="white"/>
+        <rect x="240.5" y="217.5" width="104.5" height="107.5" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(245.5 233.84595)" fill="black">
+          <tspan font-family="Helvetica Neue" font-weight="bold" font-size="16" fill="black" x="0" y="16">Hot cabinet</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="34.46411">  Chips:  19</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="52.91211">  Cod: 9</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="71.36011">  Plaice: 0</tspan>
+        </text>
+      </g>
+      <g id="Graphic_49">
+        <rect x="578.1441" y="217.5" width="104.5" height="107.5" fill="white"/>
+        <rect x="578.1441" y="217.5" width="104.5" height="107.5" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(583.1441 233.84595)" fill="black">
+          <tspan font-family="Helvetica Neue" font-weight="bold" font-size="16" fill="black" x="0" y="16">Hot cabinet</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="34.46411">  Chips: 19</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="52.91211">  Cod: 9</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="71.36011">  Plaice: 1</tspan>
+        </text>
+      </g>
+      <g id="Graphic_50">
+        <path d="M 532.63345 273.914 L 532.5714 269.086 L 556.5201 268.77836 L 556.45477 263.69296 L 571.5237 271 L 556.64745 278.69173 L 556.5821 273.60633 Z" fill="black" fill-opacity=".1"/>
+        <path d="M 532.63345 273.914 L 532.5714 269.086 L 556.5201 268.77836 L 556.45477 263.69296 L 571.5237 271 L 556.64745 278.69173 L 556.5821 273.60633 Z" stroke="black" stroke-opacity=".75" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_51">
+        <text transform="translate(398.90005 258.5)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15">[“plaice”, “chips”]</tspan>
+        </text>
+      </g>
+      <g id="Graphic_52">
+        <path d="M 351.65144 273.914 L 351.5894 269.086 L 375.5381 268.77836 L 375.47276 263.69296 L 390.54167 271 L 375.66544 278.69173 L 375.6001 273.60633 Z" fill="black" fill-opacity=".1"/>
+        <path d="M 351.65144 273.914 L 351.5894 269.086 L 375.5381 268.77836 L 375.47276 263.69296 L 390.54167 271 L 375.66544 278.69173 L 375.6001 273.60633 Z" stroke="black" stroke-opacity=".75" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_53">
+        <rect x="596" y="313" width="104.5" height="107.5" fill="white"/>
+        <rect x="596" y="313" width="104.5" height="107.5" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(601 329.34595)" fill="black">
+          <tspan font-family="Helvetica Neue" font-weight="bold" font-size="16" fill="black" x="0" y="16">Hot cabinet</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="34.46411">  Chips: 18</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="52.91211">  Cod: 9</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="71.36011">  Plaice: 0</tspan>
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>

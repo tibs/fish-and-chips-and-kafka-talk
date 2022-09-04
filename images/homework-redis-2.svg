@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="240 217 435 109" width="435" height="109">
+  <defs/>
+  <g id="Canvas_1" fill="none" fill-opacity="1" stroke="none" stroke-opacity="1" stroke-dasharray="none">
+    <title>Canvas 1</title>
+    <rect fill="white" x="240" y="217" width="435" height="109"/>
+    <g id="Canvas_1_Layer_1">
+      <title>Layer 1</title>
+      <g id="Graphic_5">
+        <rect x="240.5" y="217.5" width="104.5" height="107.5" fill="white"/>
+        <rect x="240.5" y="217.5" width="104.5" height="107.5" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(245.5 233.84595)" fill="black">
+          <tspan font-family="Helvetica Neue" font-weight="bold" font-size="16" fill="black" x="0" y="16">Hot cabinet</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="34.46411">  Chips:  20</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="52.91211">  Cod: 10</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="71.36011">  Plaice: 0</tspan>
+        </text>
+      </g>
+      <g id="Graphic_22">
+        <path d="M 348.68892 269.9123 L 348.63527 265.0842 L 378.5003 264.75234 L 378.4438 259.66684 L 393.5 267 L 378.61045 274.66592 L 378.55394 269.58042 Z" fill="black" fill-opacity=".1"/>
+        <path d="M 348.68892 269.9123 L 348.63527 265.0842 L 378.5003 264.75234 L 378.4438 259.66684 L 393.5 267 L 378.61045 274.66592 L 378.55394 269.58042 Z" stroke="black" stroke-opacity=".75" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_49">
+        <rect x="569.5642" y="217.5" width="104.5" height="107.5" fill="white"/>
+        <rect x="569.5642" y="217.5" width="104.5" height="107.5" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(574.5642 233.84595)" fill="black">
+          <tspan font-family="Helvetica Neue" font-weight="bold" font-size="16" fill="black" x="0" y="16">Hot cabinet</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="34.46411">  Chips: 19</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="52.91211">  Cod: 9</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="71.36011">  Plaice: 0</tspan>
+        </text>
+      </g>
+      <g id="Graphic_50">
+        <path d="M 521.091 269.9123 L 521.0374 265.0842 L 550.9024 264.75234 L 550.8459 259.66684 L 565.9021 267 L 551.01255 274.66592 L 550.95604 269.58042 Z" fill="black" fill-opacity=".1"/>
+        <path d="M 521.091 269.9123 L 521.0374 265.0842 L 550.9024 264.75234 L 550.8459 259.66684 L 565.9021 267 L 551.01255 274.66592 L 550.95604 269.58042 Z" stroke="black" stroke-opacity=".75" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_51">
+        <text transform="translate(402.1621 258.02513)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15">[“cod”, “chips”]</tspan>
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>

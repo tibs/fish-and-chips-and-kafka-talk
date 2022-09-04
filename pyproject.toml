@@ -10,6 +10,7 @@ python = "^3.10"
 rst2pdf = "^0.99"
 Pygments = "^2.12.0"
 docutils = "^0.19"
+svglib = "^1.4.1"
 
 [tool.poetry.dev-dependencies]
 

@@ -468,7 +468,7 @@ More customers - add queues
 
 <New diagram>
 
-That is, use multiple **producers*
+That is, use multiple *producers*
 
 Add queues, use *queue number* to distinguish customers and split the messages
 up into partitions
@@ -632,7 +632,7 @@ OpenSearch and
 PostgreSQL,
 are trademarks and property of their respective owners.
 
-*Redis is a registered trademark of Redis Ltd. Any rights therein are reserved to Redis Ltd.
+Redis is a registered trademark of Redis Ltd. Any rights therein are reserved to Redis Ltd.
 
 ---------
 

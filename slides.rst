@@ -154,14 +154,16 @@ Glossary
 Serving a customer
 ------------------
 
-.. raw:: pdf
+   .. raw:: pdf
 
-   Spacer 0 30
+      Spacer 0 30
 
-.. TILL -> [ORDER] -> FOOD-PREPARER
+..
+   .. TILL -> [ORDER] -> FOOD-PREPARER
 
-.. image:: images/Fish-Till-Preparer.png
+.. image:: images/demo1-till-preparer.svg
    :width: 100%
+
 
 An order
 --------
@@ -182,15 +184,13 @@ Show first demo
 .. Yes, this is deliberately repeating the image from above,
    because this is what I intend to demo
 
-   DEMO: simple TILL -> [ORDER] -> FOOD-PREPARER
-
 .. raw:: pdf
 
    Spacer 0 30
 
 .. TILL -> [ORDER] -> FOOD-PREPARER
 
-.. image:: images/Fish-Till-Preparer.png
+.. image:: images/demo1-till-preparer.svg
    :width: 100%
 
 
@@ -301,16 +301,20 @@ Customers now queue at multiple TILLs, each TILL is a Producer.
 
 Use the *queue number* as the key to split the events up into partitions
 
-Diagram
--------
+Three tills
+-----------
 
-Diagram with 3 TILLs but still 1 FOOD-PREPARER ::
+.. image:: images/demo2-3tills.svg
+   :width: 100%
 
-  TILL
-      \
-  TILL -> [ORDER with partitions] -> FOOD-PREPARER
-      /
-  TILL
+..
+   Diagram with 3 TILLs but still 1 FOOD-PREPARER ::
+
+     TILL
+         \
+     TILL -> [ORDER with partitions] -> FOOD-PREPARER
+         /
+     TILL
 
 An order with multiple TILLs
 ----------------------------
@@ -344,26 +348,34 @@ Show demo: multiple TILLs
 
 .. The multiple tills picture again
 
-::
+..
+   ::
 
-  TILL
-      \
-  TILL -> [ORDER with partitions] -> FOOD-PREPARER
-      /
-  TILL
+     TILL
+         \
+     TILL -> [ORDER with partitions] -> FOOD-PREPARER
+         /
+     TILL
+
+.. image:: images/demo2-3tills.svg
+   :width: 100%
 
 But now the FOOD-PREPARER is too busy
 -------------------------------------
 
 So add multiple *consumers*
 
-::
+.. image:: images/demo3-3preparers.svg
+   :width: 100%
 
-  TILL                             > FOOD-PREPARER
-      \                           /
-  TILL -> [ORDER with partitions] -> FOOD-PREPARER
-      /                           \
-  TILL                             > FOOD-PERPARER
+..
+   ::
+
+     TILL                             > FOOD-PREPARER
+         \                           /
+     TILL -> [ORDER with partitions] -> FOOD-PREPARER
+         /                           \
+     TILL                             > FOOD-PERPARER
 
 How we alter the code
 ---------------------
@@ -376,13 +388,17 @@ Show demo: multiple TILLs and multiple FOOD-PREPARERS
 
 .. The multiple tills picture again
 
-::
+..
+   ::
 
-  TILL                             > FOOD-PREPARER
-      \                           /
-  TILL -> [ORDER with partitions] -> FOOD-PREPARER
-      /                           \
-  TILL                             > FOOD-PERPARER
+     TILL                             > FOOD-PREPARER
+         \                           /
+     TILL -> [ORDER with partitions] -> FOOD-PREPARER
+         /                           \
+     TILL                             > FOOD-PERPARER
+
+.. image:: images/demo3-3preparers.svg
+   :width: 100%
 
 
 Start consuming from a specific offset
@@ -412,14 +428,22 @@ So we need a COOK to cook it
 Participant changes - add COOK
 ------------------------------
 
-::
+.. raw:: pdf
 
-  TILL -> [ORDER] -> FOOD-PREPARER
-             ^         |
-             |      [COOK]
-             |         |
-             |         V
-             +------- COOK
+   Spacer 0 10
+
+..
+   ::
+
+     TILL -> [ORDER] -> FOOD-PREPARER
+                ^         |
+                |      [COOK]
+                |         |
+                |         V
+                +------- COOK
+
+.. image:: images/demo4-cook.svg
+   :width: 100%
 
 An order with plaice
 --------------------
@@ -488,6 +512,9 @@ Show demo of (simple) cod-and-chips order, with COOK
 .. Keep it to the simple cod-and-chips order from demo 1, with COOK added, so it
    isn't too complicated to explain
 
+.. image:: images/demo4-cook.svg
+   :width: 100%
+
 
 Summary so far
 --------------
@@ -501,11 +528,36 @@ We made a simple model for orders with plaice
 Homework: Adding the ANALYST
 ----------------------------
 
-::
+   .. raw:: pdf
 
-  TILL -> [ORDER] -> FOOD-PREPARER
-                  \
-                   +-> ANALYST -> PG
+      Spacer 0 10
+
+..
+   ::
+
+     TILL -> [ORDER] -> FOOD-PREPARER
+                     \
+                      +-> ANALYST -> PG
+
+.. image:: images/homework-kafka-magic.svg
+   :width: 100%
+
+Using Kafka Connect
+-------------------
+
+   .. raw:: pdf
+
+      Spacer 0 10
+
+..
+   ::
+
+     TILL -> [ORDER] -> FOOD-PREPARER
+                     \
+                      +-> ANALYST -> PG
+
+.. image:: images/homework-kafka-connect.svg
+   :width: 100%
 
 ..
    Keep it to the simple cod-and-chips order from demo 1, with ANALYST added, so it
@@ -606,6 +658,32 @@ back into the [ORDER] topic.
 .. This last is why the slightly icky "setting a boolean flag" trick isn't so
    bad, as it is sort of simulating what we are doing above. It would be worth
    explaining this, at this point
+
+Start of day
+------------
+
+.. raw:: pdf
+
+   Spacer 0 10
+
+.. image:: images/homework-redis-1.svg
+   :width: 70%
+
+Cod and chips
+-------------
+
+.. raw:: pdf
+
+   Spacer 0 10
+
+.. image:: images/homework-redis-2.svg
+   :width: 100%
+
+Plaice and chips
+----------------
+
+.. image:: images/homework-redis-3.svg
+   :width: 90%
 
 Final summary
 -------------

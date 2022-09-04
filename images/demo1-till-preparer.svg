@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="118 239 580 47" width="580" height="47">
+  <defs/>
+  <g id="Canvas_1" fill="none" fill-opacity="1" stroke="none" stroke-opacity="1" stroke-dasharray="none">
+    <title>Canvas 1</title>
+    <rect fill="white" x="118" y="239" width="580" height="47"/>
+    <g id="Canvas_1_Layer_1">
+      <title>Layer 1</title>
+      <g id="Graphic_2">
+        <text transform="translate(123.5 254.49503)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="7958079e-19" y="15">Customer</tspan>
+        </text>
+      </g>
+      <g id="Graphic_5">
+        <rect x="219.5" y="243.224" width="98" height="40" fill="white"/>
+        <rect x="219.5" y="243.224" width="98" height="40" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(224.5 254)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="34.08" y="15">Till</tspan>
+        </text>
+      </g>
+      <g id="Graphic_7">
+        <path d="M 372.02626 264.91695 C 356.1875 262.5 362.5036 242.15325 387.76996 245.625 C 390.1141 238.85745 419.4955 239.9559 419.3034 245.625 C 437.72644 238.37415 461.26996 252.8322 445.47824 260.08305 C 464.4275 263.59845 445.2391 282.53895 429.6875 279.375 C 428.4429 284.64855 400.6413 286.494 398.2011 279.375 C 382.45836 286.97775 349.6323 275.2881 372.02626 264.91695 Z" fill="white"/>
+        <path d="M 372.02626 264.91695 C 356.1875 262.5 362.5036 242.15325 387.76996 245.625 C 390.1141 238.85745 419.4955 239.9559 419.3034 245.625 C 437.72644 238.37415 461.26996 252.8322 445.47824 260.08305 C 464.4275 263.59845 445.2391 282.53895 429.6875 279.375 C 428.4429 284.64855 400.6413 286.494 398.2011 279.375 C 382.45836 286.97775 349.6323 275.2881 372.02626 264.91695 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(378.95 253.276)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="8.995999" y="15">Order</tspan>
+        </text>
+      </g>
+      <g id="Graphic_9">
+        <text transform="translate(622.76 253.276)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="7958079e-19" y="15">Customer</tspan>
+        </text>
+      </g>
+      <g id="Graphic_12">
+        <rect x="499" y="243" width="98" height="40" fill="white"/>
+        <rect x="499" y="243" width="98" height="40" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <text transform="translate(504 253.776)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="13.48" y="15">Preparer</tspan>
+        </text>
+      </g>
+      <g id="Graphic_22">
+        <path d="M 452.76614 264.4162 L 452.8705 259.58895 L 483.91977 260.26018 L 484.0297 255.17555 L 498.8379 262.99743 L 483.7055 270.17205 L 483.8154 265.08742 Z" fill="black" fill-opacity=".1"/>
+        <path d="M 452.76614 264.4162 L 452.8705 259.58895 L 483.91977 260.26018 L 484.0297 255.17555 L 498.8379 262.99743 L 483.7055 270.17205 L 483.8154 265.08742 Z" stroke="black" stroke-opacity=".75" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_51">
+        <path d="M 317.60992 265.1402 L 317.71428 260.31295 L 348.76355 260.98417 L 348.87347 255.89955 L 363.6817 263.72143 L 348.54928 270.89605 L 348.6592 265.81142 Z" fill="black" fill-opacity=".1"/>
+        <path d="M 317.60992 265.1402 L 317.71428 260.31295 L 348.76355 260.98417 L 348.87347 255.89955 L 363.6817 263.72143 L 348.54928 270.89605 L 348.6592 265.81142 Z" stroke="black" stroke-opacity=".75" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+    </g>
+  </g>
+</svg>
