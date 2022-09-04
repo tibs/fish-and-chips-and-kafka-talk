@@ -133,7 +133,7 @@ Get the certificates:
   mkdir -p creds
   avn service user-creds-download $KAFKA_NAME --project $PROJECT_NAME -d creds --username avnadmin
 
-******Note** the following are in no way in logical order or anything
+**Note** the following are in no way in logical order or anything
 
 .. code:: shell
 
@@ -150,3 +150,17 @@ You may also be interested in
 https://github.com/aiven/python-notebooks-for-apache-kafka,
 which is a series of Jupyter Notebooks on how to start with Apache Kafka® and
 Python, using Aiven managed services.
+
+------
+
+  |cc-attr-sharealike|
+
+  The source code in this directory is dual-licensed under the MIT license
+  (see `LICENSE.txt <LICENSE.txt>`_) and `Creative Commons
+  Attribution-ShareAlike 4.0 International License`_. Choose whichever seems
+  most appropriate for your use.
+
+.. |cc-attr-sharealike| image:: images/cc-attribution-sharealike-88x31.png
+   :alt: CC-Attribution-ShareAlike image
+
+.. _`Creative Commons Attribution-ShareAlike 4.0 International License`: http://creativecommons.org/licenses/by-sa/4.0/
