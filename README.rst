@@ -96,6 +96,11 @@ The demo
 The source code for the demonstration program is in the `src <src/>`_ directory. See
 the `readme.rst <src/readme.rst>`_ for how to run it.
 
+The videos of the demos (which I use during the talk) are in a separate
+repository, at https://github.com/tibs/fish-and-chips-and-kafka-videos (it
+seems unfair to make you download them from here if you're not interested).
+
+
 ..
    The slide notes
    ~~~~~~~~~~~~~~~
