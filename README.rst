@@ -58,6 +58,12 @@ and also:
 .. _`Create a JDBC sink connector:
    https://docs.aiven.io/docs/products/kafka/kafka-connect/howto/jdbc-sink.html
 
+Not used in the demos, but another interesting Kafka library for Python is
+faust_, which provides *Kafka Streams*, allowing (for instance) merging of
+events from multiple Kafka topics.
+
+.. _faust: https://faust.readthedocs.io/
+
 Lastly, but definitely not least, `The Log: What every software engineer
 should know about real-time data's unifying abstraction`_ is the 2013 paper by
 Jay Kreps that explains the concepts behind Kafka. It is very worth a read.
