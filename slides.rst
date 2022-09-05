@@ -279,7 +279,7 @@ More customers - add more TILLs
 
 Customers now queue at multiple TILLs, each TILL is a Producer.
 
-Use the *queue number* as the key to split the events up into partitions
+Use the *till number* as the key to split the events up into partitions
 
 Three tills
 -----------
@@ -315,10 +315,17 @@ How we alter the code
 
 When creating the topic for the demo, request 3 partitions:
 
-.. code:: python
+  .. code:: python
 
-    NewTopic(name='DEMO2-ORDERS', num_partitions=3_partitions,
-             replication_factor=1)
+        NewTopic(
+            name='DEMO2-ORDERS',
+            num_partitions=3,
+            replication_factor=1,
+        )
+
+.. raw:: pdf
+
+   Spacer 0 10
 
 Create 3 Till producers instead of 1
 
