@@ -31,6 +31,7 @@ What we'll cover
   * How to talk to Kafka
   * Start with a simple model and work up
   * There's a demo you can play with afterwards
+  * Some ideas for things you can do to extend the demos
 
 
 Some message problems I've cared about
@@ -167,19 +168,6 @@ Show first demo
 
 1 till, 1 food preparer
 
-.. Yes, this is deliberately repeating the image from above,
-   because this is what I intend to demo
-
-.. raw:: pdf
-
-   Spacer 0 30
-
-.. TILL -> [ORDER] -> FOOD-PREPARER
-
-..
-   .. image:: images/demo1-till-preparer.svg
-      :width: 100%
-
 
 Libraries
 ---------
@@ -294,15 +282,6 @@ Three tills
 .. image:: images/demo2-3tills.svg
    :width: 80%
 
-..
-   Diagram with 3 TILLs but still 1 FOOD-PREPARER ::
-
-     TILL
-         \
-     TILL -> [ORDER with partitions] -> FOOD-PREPARER
-         /
-     TILL
-
 An order with multiple TILLs
 ----------------------------
 
@@ -336,8 +315,6 @@ When creating the topic for the demo, request 3 partitions:
 
 Create 3 Till producers instead of 1
 
-.. Consider a screen shot to show we've got 3 partitions in use
-
 Show demo: multiple TILLs
 -------------------------
 
@@ -346,21 +323,6 @@ Show demo: multiple TILLs
    Spacer 0 30
 
 Three tills, 3 partitions, 1 food preparer
-
-.. The multiple tills picture again
-
-..
-   ::
-
-     TILL
-         \
-     TILL -> [ORDER with partitions] -> FOOD-PREPARER
-         /
-     TILL
-
-..
-   .. image:: images/demo2-3tills.svg
-      :width: 80%
 
 But now the FOOD-PREPARER is too busy
 -------------------------------------
@@ -421,20 +383,6 @@ Show demo: multiple TILLs and PREPARERS
 
 Three tills, 3 partitions, 2 food preparers
 
-.. The multiple tills picture again
-
-..
-   ::
-
-     TILL                             > FOOD-PREPARER
-         \                           /
-     TILL -> [ORDER with partitions]
-         /                           \
-     TILL                             > FOOD-PERPARER
-
-..
-   .. image:: images/demo3-3preparers.svg
-      :width: 80%
 
 Cod or plaice
 -------------
@@ -550,9 +498,6 @@ In the Cook
    cache is provided, because then the check for "ready" would be replaced by a
    check against the cache).
 
-   Question: do we want a separate partition for orders from the COOK? Or do we
-   want a random partition? (either explicitly or implicitly random)
-
 Demo with COOK
 --------------
 
@@ -561,13 +506,6 @@ Demo with COOK
    Spacer 0 30
 
 1 till, 1 food preparer, 1 COOK
-
-.. Keep it to the simple cod-and-chips order from demo 1, with COOK added, so it
-   isn't too complicated to explain
-
-..
-   .. image:: images/demo4-cook.svg
-      :width: 80%
 
 
 Summary so far
@@ -613,42 +551,6 @@ Using Kafka Connect
 .. image:: images/homework-kafka-connect.svg
    :width: 100%
 
-..
-   Keep it to the simple cod-and-chips order from demo 1, with ANALYST added, so it
-   isn't too complicated to explain. Show some query result from the PG databse
-   being updated - perhaps just total number of orders.
-
-..
-   Two ways to do the ANALYST
-   --------------------------
-
-   1. Add a new (independent) consumer of [ORDER], and have them write to
-      PostgreSQL®
-
-   2. Use an Apache Kafka® Connector to connect the [ORDER] topic to PostgreSQL
-      without needing to alter the Python code
-
-   If I do (1), then we get to choose when to start the ANALYST consuming, and I
-   can do the toggle to start it. But (2) introduces something nice to know
-   about, and is probably more realistic.
-
-   (Option 1) What we need to do in the code
-   -----------------------------------------
-
-   ... *add code for ANALYST consumer, and make it write to PG*
-
-   ... *add code to read some sort of statistic from PG and report as it changes*
-
-   (Option 1) Demo with ANALYST
-   ----------------------------
-
-   ::
-
-     TILL -> [ORDER] -> FOOD-PREPARER
-                     \
-                      +-> ANALYST -> PG
-
-   *Maybe with a toggle button to start the ANALYST*
 
 Apache Kafka Connectors
 -----------------------
@@ -669,16 +571,6 @@ https://docs.aiven.io/docs/products/kafka/kafka-connect/howto/jdbc-sink.html
 
 And then add code to the Python demo to query PostgreSQL and make some sort of
 report over time.
-
-..
-   Demo with ANALYST
-   -----------------
-
-   ::
-
-     TILL -> [ORDER] -> FOOD-PREPARER
-                     \
-                      +-> ANALYST -> PG
 
 
 Homework 2: Model cooking the fish and chips
@@ -734,7 +626,6 @@ Plaice and chips
 
 Final summary
 -------------
-
 
 We know how to model the ordering and serving of our cod and chips
 
