@@ -21,8 +21,8 @@ ORDER_FREQ_MIN = 1.0
 ORDER_FREQ_MAX = 1.5
 
 # Bounds on how long it takes to prepare an order
-PREP_FREQ_MIN = 1.0    # was 0.9
-PREP_FREQ_MAX = 2.0    # was 1.3
+PREP_FREQ_MIN = 0.5
+PREP_FREQ_MAX = 1.0
 
 # Bounds on how long it takes to cook an order
 COOK_FREQ_MIN = 3.0

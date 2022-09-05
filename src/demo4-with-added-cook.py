@@ -102,9 +102,7 @@ class TillWidget(DemoWidgetMixin):
         order['count'] = count = await OrderNumber.get_next_order_number()
         order['till'] = '1'  # we only have one till
 
-        self.add_line(
-            f'Got order {count}: {pretty_order(order)} at {datetime.now().strftime("%H:%M:%S")}'
-        )
+        self.add_line(f'Order {count}: {pretty_order(order)}')
 
         await producer.send(TOPIC_NAME_ORDERS, order)
 
@@ -188,23 +186,15 @@ class FoodPreparerWidget(DemoWidgetMixin):
     async def prepare_order(self, order):
         """Prepare an order"""
         order_available = self.all_order_available(order)
-        start = datetime.now()
-        self.add_line(
-            f'Received order {order["count"]} at {start.strftime("%H:%M:%S")}: {pretty_order(order)}'
-            )
+        self.add_line(f'Order {order["count"]}: {pretty_order(order)}')
 
         if order_available:
             await asyncio.sleep(random.uniform(PREP_FREQ_MIN, PREP_FREQ_MAX))
 
-            lapse = str(datetime.now() - start)[5:-4]  # lost the first and last few digits
-            self.change_last_line(
-                f'Finished order {order["count"]} of {start.strftime("%H:%M:%S")} after {lapse}: {pretty_order(order)}'
-            )
+            self.change_last_line(f'Order {order["count"]} ready: {pretty_order(order)}')
         else:
             await self.producer.send(TOPIC_NAME_COOK, order)
-            self.change_last_line(
-                f'Sending order {order["count"]} of {start.strftime("%H:%M:%S")} to COOK: {pretty_order(order)}'
-                )
+            self.change_last_line(f'COOK  {order["count"]}: {pretty_order(order)}')
 
     async def on_mount(self):
         asyncio.create_task(self.background_task())
@@ -238,7 +228,7 @@ class CookWidget(DemoWidgetMixin):
         except Exception as e:
             self.add_line(f'Consumer seek-to-end Exception {e.__class__.__name__} {e}')
             return
-        self.add_line('Consumer sought to end')
+        #self.add_line('Consumer sought to end')
 
         try:
             self.producer = aiokafka.AIOKafkaProducer(
@@ -271,10 +261,7 @@ class CookWidget(DemoWidgetMixin):
 
     async def cook_order(self, order):
         """Cook (the plaice in) an order"""
-        start = datetime.now()
-        self.add_line(
-            f'Received order {order["count"]} at {datetime.now().strftime("%H:%M:%S")}: {pretty_order(order)}'
-            )
+        self.add_line(f'Order {order["count"]}: {pretty_order(order)}')
 
         # "Cook" the (plaice in the) order
         await asyncio.sleep(random.uniform(COOK_FREQ_MIN, COOK_FREQ_MAX))
@@ -283,15 +270,10 @@ class CookWidget(DemoWidgetMixin):
         # (forgetting to do that means the order will keep going round the loop)
         order['ready'] = True
 
-        lapse = str(datetime.now() - start)[5:-4]  # lost the first and last few digits
-        self.change_last_line(
-            f'Cooked order {order["count"]} of {start.strftime("%H:%M:%S")} after {lapse}: {pretty_order(order)}'
-            )
+        self.change_last_line(f'Cooked order {order["count"]}: {pretty_order(order)}')
 
         await self.producer.send(TOPIC_NAME_ORDERS, order)
-        self.add_line(
-            f'Order {order["count"]} of {start.strftime("%H:%M:%S")} available: {pretty_order(order)}'
-            )
+        self.add_line(f'Order {order["count"]} available')
 
     async def on_mount(self):
         asyncio.create_task(self.background_task())

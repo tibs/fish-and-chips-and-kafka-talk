@@ -96,9 +96,7 @@ class TillWidget(DemoWidgetMixin):
 
         order['count'] = count = await OrderNumber.get_next_order_number()
 
-        self.add_line(
-            f'Got order {count}: {pretty_order(order)} at {datetime.now().strftime("%H:%M:%S")}'
-        )
+        self.add_line(f'Order {count}: {pretty_order(order)}')
 
         await producer.send(TOPIC_NAME, order)
 
@@ -134,7 +132,7 @@ class FoodPreparerWidget(DemoWidgetMixin):
         except Exception as e:
             self.add_line(f'Consumer seek-to-end Exception {e.__class__.__name__} {e}')
             return
-        self.add_line('Consumer sought to end')
+        #self.add_line('Consumer sought to end')
 
         try:
             async for message in consumer:
@@ -148,17 +146,12 @@ class FoodPreparerWidget(DemoWidgetMixin):
 
     async def prepare_order(self, order):
         """Prepare an order"""
-        start = datetime.now()
-        self.add_line(
-            f'Received order {order["count"]} at {start.strftime("%H:%M:%S")}: {pretty_order(order)}'
-            )
+        self.add_line(f'Order {order["count"]}: {pretty_order(order)}')
 
         await asyncio.sleep(random.uniform(PREP_FREQ_MIN, PREP_FREQ_MAX))
 
-        lapse = str(datetime.now() - start)[5:-4]  # lost the first and last few digits
-        self.change_last_line(
-            f'Finished order {order["count"]} of {start.strftime("%H:%M:%S")} after {lapse}: {pretty_order(order)}'
-        )
+        #self.add_line(f'Order {order["count"]}: ready')
+        self.change_last_line(f'Order {order["count"]}: ready')
 
     async def on_mount(self):
         asyncio.create_task(self.background_task())
