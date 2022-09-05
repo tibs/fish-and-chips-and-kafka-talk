@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="123 187 575 160" width="575" height="160">
+<svg xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="219 187 379 160" width="379" height="160">
   <defs/>
-  <g id="Canvas_1" fill="none" fill-opacity="1" stroke="none" stroke-opacity="1" stroke-dasharray="none">
+  <g id="Canvas_1" fill-opacity="1" fill="none" stroke="none" stroke-opacity="1" stroke-dasharray="none">
     <title>Canvas 1</title>
-    <rect fill="white" x="123" y="187" width="575" height="160"/>
+    <rect fill="white" x="219" y="187" width="379" height="160"/>
     <g id="Canvas_1_Layer_1">
       <title>Layer 1</title>
-      <g id="Graphic_2">
-        <text transform="translate(128 254.1393)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="7958079e-19" y="15">Customer</tspan>
-        </text>
-      </g>
       <g id="Graphic_5">
         <rect x="219.5" y="243.224" width="98" height="40" fill="white"/>
         <rect x="219.5" y="243.224" width="98" height="40" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
@@ -25,22 +20,6 @@
         <text transform="translate(378.95 251.638)" fill="black">
           <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="8.995999" y="15">Order</tspan>
         </text>
-      </g>
-      <g id="Graphic_9">
-        <text transform="translate(622.76 253.276)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="7958079e-19" y="15">Customer</tspan>
-        </text>
-      </g>
-      <g id="Graphic_12">
-        <rect x="499" y="243" width="98" height="40" fill="white"/>
-        <rect x="499" y="243" width="98" height="40" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-        <text transform="translate(504 253.776)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="13.48" y="15">Preparer</tspan>
-        </text>
-      </g>
-      <g id="Graphic_22">
-        <path d="M 452.76614 264.4162 L 452.8705 259.58895 L 483.91977 260.26018 L 484.0297 255.17555 L 498.8379 262.99743 L 483.7055 270.17205 L 483.8154 265.08742 Z" fill="black" fill-opacity=".1"/>
-        <path d="M 452.76614 264.4162 L 452.8705 259.58895 L 483.91977 260.26018 L 484.0297 255.17555 L 498.8379 262.99743 L 483.7055 270.17205 L 483.8154 265.08742 Z" stroke="black" stroke-opacity=".75" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
       </g>
       <g id="Graphic_51">
         <path d="M 317.59578 265.13985 L 317.7284 260.3133 L 349.09816 261.17538 L 349.23788 256.09148 L 364 264 L 348.8258 271.08582 L 348.96552 266.00193 Z" fill="black" fill-opacity=".1"/>
@@ -58,16 +37,6 @@
         <rect x="219.5" y="187.5" width="98" height="40" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(224.5 198.276)" fill="black">
           <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="34.08" y="15">Till</tspan>
-        </text>
-      </g>
-      <g id="Graphic_54">
-        <text transform="translate(128 198.276)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="7958079e-19" y="15">Customer</tspan>
-        </text>
-      </g>
-      <g id="Graphic_55">
-        <text transform="translate(128 316.776)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="7958079e-19" y="15">Customer</tspan>
         </text>
       </g>
       <g id="Graphic_56">
@@ -155,16 +124,6 @@
       <g id="Graphic_79">
         <path d="M 451.844 287.00668 L 455.156 283.49332 L 488.76037 315.17203 L 492.249 311.47135 L 498 327.2 L 481.9597 322.38607 L 485.44834 318.6854 Z" fill="black" fill-opacity=".1"/>
         <path d="M 451.844 287.00668 L 455.156 283.49332 L 488.76037 315.17203 L 492.249 311.47135 L 498 327.2 L 481.9597 322.38607 L 485.44834 318.6854 Z" stroke="black" stroke-opacity=".75" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
-      </g>
-      <g id="Graphic_80">
-        <text transform="translate(622.76 314.8)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="7958079e-19" y="15">Customer</tspan>
-        </text>
-      </g>
-      <g id="Graphic_81">
-        <text transform="translate(622.76 198.276)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="7958079e-19" y="15">Customer</tspan>
-        </text>
       </g>
     </g>
   </g>

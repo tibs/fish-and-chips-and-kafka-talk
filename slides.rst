@@ -161,6 +161,12 @@ An order
 Show first demo
 ---------------
 
+.. raw:: pdf
+
+   Spacer 0 30
+
+1 till, 1 food preparer
+
 .. Yes, this is deliberately repeating the image from above,
    because this is what I intend to demo
 
@@ -170,8 +176,9 @@ Show first demo
 
 .. TILL -> [ORDER] -> FOOD-PREPARER
 
-.. image:: images/demo1-till-preparer.svg
-   :width: 100%
+..
+   .. image:: images/demo1-till-preparer.svg
+      :width: 100%
 
 
 Libraries
@@ -285,7 +292,7 @@ Three tills
 -----------
 
 .. image:: images/demo2-3tills.svg
-   :width: 100%
+   :width: 80%
 
 ..
    Diagram with 3 TILLs but still 1 FOOD-PREPARER ::
@@ -334,6 +341,12 @@ Create 3 Till producers instead of 1
 Show demo: multiple TILLs
 -------------------------
 
+.. raw:: pdf
+
+   Spacer 0 30
+
+Three tills, 3 partitions, 1 food preparer
+
 .. The multiple tills picture again
 
 ..
@@ -345,8 +358,9 @@ Show demo: multiple TILLs
          /
      TILL
 
-.. image:: images/demo2-3tills.svg
-   :width: 100%
+..
+   .. image:: images/demo2-3tills.svg
+      :width: 80%
 
 But now the FOOD-PREPARER is too busy
 -------------------------------------
@@ -354,15 +368,15 @@ But now the FOOD-PREPARER is too busy
 Add multiple *consumers*
 ------------------------
 
-.. image:: images/demo3-3preparers.svg
-   :width: 100%
+.. image:: images/demo3-2preparers.svg
+   :width: 80%
 
 ..
    ::
 
      TILL                             > FOOD-PREPARER
          \                           /
-     TILL -> [ORDER with partitions] -> FOOD-PREPARER
+     TILL -> [ORDER with partitions]
          /                           \
      TILL                             > FOOD-PERPARER
 
@@ -398,8 +412,14 @@ Various solutions - simplest for this case is to do:
     await consumer.seek_to_end()
 
 
-Show demo: multiple TILLs and multiple FOOD-PREPARERS
------------------------------------------------------
+Show demo: multiple TILLs and PREPARERS
+---------------------------------------
+
+.. raw:: pdf
+
+   Spacer 0 30
+
+Three tills, 3 partitions, 2 food preparers
 
 .. The multiple tills picture again
 
@@ -408,12 +428,13 @@ Show demo: multiple TILLs and multiple FOOD-PREPARERS
 
      TILL                             > FOOD-PREPARER
          \                           /
-     TILL -> [ORDER with partitions] -> FOOD-PREPARER
+     TILL -> [ORDER with partitions]
          /                           \
      TILL                             > FOOD-PERPARER
 
-.. image:: images/demo3-3preparers.svg
-   :width: 100%
+..
+   .. image:: images/demo3-3preparers.svg
+      :width: 80%
 
 Cod or plaice
 -------------
@@ -443,7 +464,7 @@ Participant changes - add COOK
                 +------- COOK
 
 .. image:: images/demo4-cook.svg
-   :width: 100%
+   :width: 80%
 
 An order with plaice
 --------------------
@@ -535,13 +556,18 @@ In the Cook
 Demo with COOK
 --------------
 
-Show demo of (simple) cod-and-chips order, with COOK
+.. raw:: pdf
+
+   Spacer 0 30
+
+1 till, 1 food preparer, 1 COOK
 
 .. Keep it to the simple cod-and-chips order from demo 1, with COOK added, so it
    isn't too complicated to explain
 
-.. image:: images/demo4-cook.svg
-   :width: 100%
+..
+   .. image:: images/demo4-cook.svg
+      :width: 80%
 
 
 Summary so far
