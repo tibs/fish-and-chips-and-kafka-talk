@@ -666,14 +666,15 @@ Redis has entries for the hot cabinet content, keyed by ``cod``, (portions of)
 Using the cache
 ---------------
 
-PRODUCER compares the order to the counts in the cache. If there's enough
+PREPARER compares the order to the counts in the cache. If there's enough
 "stuff" to make the order up, decrements the cache appropriately, and that's
-done.
+done
 
-If not, sends the order to the COOK, who updates the cache - for ``plaice``
-just adds as many as are needed, for the others, if they go below a threshold,
-adds a standard quantity back in ("cooking in batches"). Then sends the order
-back into the [ORDER] topic.
+If not, sends the order to the COOK
+
+COOK updates the cache - for ``plaice``, adds as many as are needed, for
+the others, if they go below a threshold, adds a standard quantity back in
+("cooking in batches"). Then sends the order back to the [ORDER] topic
 
 .. This last is why the slightly icky "setting a boolean flag" trick isn't so
    bad, as it is sort of simulating what we are doing above. It would be worth
