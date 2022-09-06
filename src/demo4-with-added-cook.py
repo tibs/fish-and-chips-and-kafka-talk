@@ -52,8 +52,8 @@ from demo_helpers import PREP_FREQ_MIN, PREP_FREQ_MAX
 from demo_helpers import COOK_FREQ_MIN, COOK_FREQ_MAX
 
 
-TOPIC_NAME_ORDERS = 'DEMO5-ORDERS'
-TOPIC_NAME_COOK = 'DEMO5-COOK'
+TOPIC_NAME_ORDERS = 'DEMO4-ORDERS'
+TOPIC_NAME_COOK = 'DEMO4-COOK'
 
 
 # I'm not keen on globals, but sometimes they're convenient,

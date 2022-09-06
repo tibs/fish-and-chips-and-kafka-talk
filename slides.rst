@@ -172,11 +172,15 @@ Show first demo
 Libraries
 ---------
 
-`kafka-python`: https://github.com/dpkp/kafka-python
+``kafka-python``: https://github.com/dpkp/kafka-python
 
-`aiokafka`: https://github.com/aio-libs/aiokafka
+``aiokafka``: https://github.com/aio-libs/aiokafka
 
-`Textual`: https://github.com/Textualize/textual
+and
+
+``Textual``: https://github.com/Textualize/textual
+
+``Rich``: https://github.com/Textualize/rich
 
 
 Code: Producer
@@ -195,7 +199,6 @@ Code: Producer
         value_serializer=lambda v: json.dumps(v).encode('ascii'),
 
     while SHOP_IS_OPEN:
-        # get order from CUSTOMER
         producer.send('ORDER'), order)
 
 Code: Consumer
@@ -248,8 +251,7 @@ Code: Asynchronous Producer
     await producer.start()
 
     while SHOP_IS_OPEN:
-        # get order from CUSTOMER
-        await producer.send_and_wait('ORDERS', message)
+        await producer.send('ORDERS', message)
 
 Code: Asynchronous Consumer
 ---------------------------
@@ -273,8 +275,6 @@ More customers - add more TILLs
 -------------------------------
 
 Customers now queue at multiple TILLs, each TILL is a Producer.
-
-Use the *till number* as the key to split the events up into partitions
 
 Three tills
 -----------
@@ -324,8 +324,7 @@ Show demo: multiple TILLs
 
 Three tills, 3 partitions, 1 food preparer
 
-But now the FOOD-PREPARER is too busy
--------------------------------------
+.. but now the food producer is too busy
 
 Add multiple *consumers*
 ------------------------
@@ -345,11 +344,7 @@ Add multiple *consumers*
 How we alter the code
 ---------------------
 
-Send to different partitions
-
-.. code:: python
-
-    await producer.send(TOPIC_NAME, value=order, partition=self.instance_number-1)
+Create 2 Food preparer consumers instead of 1
 
 Consumers need to be in same *consumer group*
 
@@ -372,6 +367,22 @@ Various solutions - simplest for this case is to do:
 .. code:: python
 
     await consumer.seek_to_end()
+
+
+Sending to different partitions
+-------------------------------
+
+.. code:: python
+
+    await producer.send(TOPIC_NAME, value=order)
+
+.. code:: python
+
+    await producer.send(TOPIC_NAME, value=order, key='till')
+
+.. code:: python
+
+    await producer.send(TOPIC_NAME, value=order, partition=till_number-1)
 
 
 Show demo: multiple TILLs and PREPARERS
@@ -445,8 +456,8 @@ Gets turned into...
       "ready": <boolean>
    }
 
-Code changes to add COOK
-------------------------
+Code changes to the PREPARER
+----------------------------
 
 .. code:: python
 
@@ -454,18 +465,16 @@ Code changes to add COOK
         if 'ready' not in order:
             all_items = itertools.chain(*order['order'])
             order['ready'] = 'plaice' not in all_items
+        return order['ready']
 
 .. code:: python
 
         order_available = self.all_order_available(order)
-        if order_available:
-            await asyncio.sleep(random.uniform(PREP_FREQ_MIN, PREP_FREQ_MAX))
-            # Say order is finished
-        else:
+        if not order_available:
             await self.producer.send(TOPIC_NAME_COOK, order)
 
-In the Cook
------------
+In the new COOK
+---------------
 
 .. code:: python
 
@@ -517,8 +526,8 @@ We know how to scale with multiple Producers and Consumers
 
 We made a simple model for orders with plaice
 
-Homework 1: Adding the ANALYST
-------------------------------
+Homework 1: Adding an ANALYST
+-----------------------------
 
    .. raw:: pdf
 
@@ -567,7 +576,7 @@ https://docs.aiven.io/docs/products/kafka/kafka-connect/howto/jdbc-sink.html
 
 * Create an appropriate PostgreSQL database and table
 * Make sure that the Kafka service has Kafka Connect enabled
-* Use the Aiven web console to setup the new connector
+* Use the Aiven web console to setup a JDBC sink connector to send events to PG
 
 And then add code to the Python demo to query PostgreSQL and make some sort of
 report over time.

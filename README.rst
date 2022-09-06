@@ -58,6 +58,11 @@ and also:
 .. _`Create a JDBC sink connector:
    https://docs.aiven.io/docs/products/kafka/kafka-connect/howto/jdbc-sink.html
 
+For the terminal user interface, is used Textual_ and Rich_.
+
+.. _Textual: https://github.com/Textualize/textual
+.. _Rich: https://github.com/Textualize/rich
+
 Not used in the demos, but another interesting Kafka library for Python is
 faust_, which provides *Kafka Streams*, allowing (for instance) merging of
 events from multiple Kafka topics.
