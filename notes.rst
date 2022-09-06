@@ -9,6 +9,31 @@ A talk to be given at PyCon UK 2022
 
 .. contents::
 
+Comments from after CamPUG
+==========================
+
+* I normally hate history lessons in talks but your three message system use cases were really good
+* someone will explain to you that kafka cannot be exactly-once delivery because that's not how Physics works
+* On the slide "Multiple Partitions, Consumer Groups", look at the data in the bottom right. There's an a where I think a b should be
+* try not to say "simple"!
+
+The thing that the chips are in ... basket? Fryer?
+
+------
+
+extra ``)`` in the middle of a ``producer.send``
+
+check if the async redis library is called aioredis
+
+worth putting in (probably) screenshot of web console showing topics and the
+distribution of events between topics
+
+would have been nice to show the order queue separately, to give more context
+in the UI - this would need me to write the code for that :smile:
+
+Took just over 30 minutes, so need to tighten it up a little, especially if I
+(do) add web console screenshots.
+
 Comments from first practice session at work
 ============================================
 
