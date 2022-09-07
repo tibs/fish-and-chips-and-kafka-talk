@@ -21,9 +21,17 @@ The thing that the chips are in ... basket? Fryer?
 
 ------
 
-extra ``)`` in the middle of a ``producer.send``
-
 check if the async redis library is called aioredis
+
+  Actually, according to https://github.com/aio-libs/aioredis-py,
+  it's now part of the normal `redis-py` package, and one just
+  needs to do::
+
+    from redis import asyncio as aioredis
+
+  which is rather wonderful.
+
+  Maybe I should put a note in the README for my Redis talk.
 
 worth putting in (probably) screenshot of web console showing topics and the
 distribution of events between topics

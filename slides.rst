@@ -199,7 +199,7 @@ Code: Producer
         value_serializer=lambda v: json.dumps(v).encode('ascii'),
 
     while SHOP_IS_OPEN:
-        producer.send('ORDER'), order)
+        producer.send('ORDER', order)
 
 Code: Consumer
 --------------
