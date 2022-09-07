@@ -17,7 +17,7 @@ This is a talk for presentation at `PyCon UK 2022`_,
 It will be presented live, but I expect a video to be made of the session, and
 will update this README with a link when it is available.
 
-It will also be presented beforehand as a live talk at CamPUG_
+It was also presented beforehand as a live talk at CamPUG_
 on `6th September 2022`_.
 
 .. _`PyCon UK 2022`: https://2022.pyconuk.org/
