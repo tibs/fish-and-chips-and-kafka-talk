@@ -326,6 +326,33 @@ Three tills, 3 partitions, 1 food preparer
 
 .. but now the food producer is too busy
 
+Web console *New??*
+--------------------
+
+.. When the image fits the (default) page, it's rather too small to be useful
+
+.. image:: images/console-overview.png
+   :width: 50%
+
+Demo 1 and demo 2 partitions *New??*
+-------------------------------------
+
+.. image:: images/console-demo1-and-demo2-focussed.png
+   :width: 100%
+
+
+Demo 2 partitions sizes *New??*
+-------------------------------
+
+.. image:: images/console-demo2-size-table.png
+   :width: 100%
+
+Demo 2 partition barchart *New??*
+---------------------------------
+
+.. image:: images/console-demo2-size-barchart.png
+   :width: 100%
+
 Add multiple *consumers*
 ------------------------
 
@@ -393,6 +420,44 @@ Show demo: multiple TILLs and PREPARERS
    Spacer 0 30
 
 Three tills, 3 partitions, 2 food preparers
+
+Web console *New?? (only if not earlier)*
+-----------------------------------------
+
+.. When the image fits the (default) page, it's rather too small to be useful
+
+.. image:: images/console-overview.png
+   :width: 50%
+
+Demo 1, demo 2, demo 3 partitions *New??*
+-----------------------------------------
+
+.. image:: images/console-demo1-demo2-and-demo3-focussed.png
+   :width: 100%
+
+Demo 3 partitions sizes *New??*
+-------------------------------
+
+.. image:: images/console-demo3-size-table.png
+   :width: 100%
+
+Demo 3 partition barchart *New??*
+---------------------------------
+
+.. image:: images/console-demo3-size-barchart.png
+   :width: 100%
+
+Demo 3 consumer groups *New??*
+------------------------------
+
+.. image:: images/console-demo3-consumer-groups.png
+   :width: 100%
+
+Demo 3 metrics *New??*
+----------------------
+
+.. image:: images/console-demo3-partial-metrics.png
+   :width: 60%
 
 
 Cod or plaice
@@ -610,6 +675,8 @@ the others, if they go below a threshold, adds a standard quantity back in
 Start of day
 ------------
 
+*Maybe drop*
+
 .. raw:: pdf
 
    Spacer 0 10
@@ -620,6 +687,8 @@ Start of day
 Cod and chips
 -------------
 
+*Maybe drop*
+
 .. raw:: pdf
 
    Spacer 0 10
@@ -629,6 +698,8 @@ Cod and chips
 
 Plaice and chips
 ----------------
+
+*Maybe drop*
 
 .. image:: images/homework-redis-3.svg
    :width: 90%

@@ -42,6 +42,18 @@ in the UI - this would need me to write the code for that :smile:
 Took just over 30 minutes, so need to tighten it up a little, especially if I
 (do) add web console screenshots.
 
+-------
+
+* Run all the demos again
+* Take screenshots of the Aiven web console for the service, for the topics,
+  and for at least one of the topics partitions panel, especially showing the
+  bar graph of data distribution between topics
+
+Ideally this would show demo2 using all 3 partitions, and demo3 using all
+partitions with data going to both consumers (so that's two screenshots, I
+guess)
+
+
 Comments from first practice session at work
 ============================================
 
