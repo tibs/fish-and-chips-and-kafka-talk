@@ -20,6 +20,10 @@ will update this README with a link when it is available.
 It was also presented beforehand as a live talk at CamPUG_
 on `6th September 2022`_.
 
+  *Note to anyone visiting after CamPUG: I'm still working on the slides
+  and other materials, so things are not necessarily stable. The tag* `CamPUG`
+  *should give you the slides as presented at CamPUG.*
+
 .. _`PyCon UK 2022`: https://2022.pyconuk.org/
 .. _CamPUG: https://www.meetup.com/CamPUG/
 .. _`6th September 2022`: https://www.meetup.com/campug/events/288163944/
