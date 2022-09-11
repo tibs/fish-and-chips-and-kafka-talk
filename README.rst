@@ -137,16 +137,6 @@ seems unfair to make you download them from here if you're not interested).
 
 Making the PDF files
 ~~~~~~~~~~~~~~~~~~~~
-You can use the Makefile to create the PDF files.
-For instance::
-
-  $ make pdf
-
-to make them all.
-
-For what the Makefile can do, use::
-
-  $ make help
 
 I use poetry_ to manage the dependencies needed to build the PDFs, and
 rst2pdf_ and its dependencies to do the actual work.
@@ -156,6 +146,27 @@ rst2pdf_ and its dependencies to do the actual work.
 
 You will also need an appropriate ``make`` program if you want to use the
 Makefile.
+
+So, for instance, in this directory I would start a new ``poetry`` shell using::
+
+  $ poetry shell
+
+and then install the dependencies using::
+
+  $ poetry install
+
+After that, you should be able to use the Makefile to create the PDF files.
+For instance::
+
+  $ make pdf
+
+to make them all.
+
+For other things the Makefile can do, use::
+
+  $ make help
+
+If you wish, you can exit the ``poetry`` shell using ``exit``.
 
 .. _CamPUG: https://www.meetup.com/CamPUG/
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
