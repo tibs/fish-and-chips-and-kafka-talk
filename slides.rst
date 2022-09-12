@@ -326,29 +326,15 @@ Three tills, 3 partitions, 1 food preparer
 
 .. but now the food producer is too busy
 
-Web console *New??*
---------------------
 
-.. When the image fits the (default) page, it's rather too small to be useful
-
-.. image:: images/console-overview.png
-   :width: 50%
-
-Demo 1 and demo 2 partitions *New??*
--------------------------------------
-
-.. image:: images/console-demo1-and-demo2-focussed.png
-   :width: 100%
-
-
-Demo 2 partitions sizes *New??*
--------------------------------
+Demo 2 partitions sizes
+-----------------------
 
 .. image:: images/console-demo2-size-table.png
    :width: 100%
 
-Demo 2 partition barchart *New??*
----------------------------------
+Demo 2 partition barchart
+-------------------------
 
 .. image:: images/console-demo2-size-barchart.png
    :width: 100%
@@ -421,40 +407,26 @@ Show demo: multiple TILLs and PREPARERS
 
 Three tills, 3 partitions, 2 food preparers
 
-Web console *New?? (only if not earlier)*
------------------------------------------
-
-.. When the image fits the (default) page, it's rather too small to be useful
-
-.. image:: images/console-overview.png
-   :width: 50%
-
-Demo 1, demo 2, demo 3 partitions *New??*
------------------------------------------
-
-.. image:: images/console-demo1-demo2-and-demo3-focussed.png
-   :width: 100%
-
-Demo 3 partitions sizes *New??*
+Demo 3 partitions sizes *Maybe*
 -------------------------------
 
 .. image:: images/console-demo3-size-table.png
    :width: 100%
 
-Demo 3 partition barchart *New??*
+Demo 3 partition barchart *Maybe*
 ---------------------------------
 
 .. image:: images/console-demo3-size-barchart.png
    :width: 100%
 
-Demo 3 consumer groups *New??*
-------------------------------
+Demo 3 consumer groups
+----------------------
 
 .. image:: images/console-demo3-consumer-groups.png
    :width: 100%
 
-Demo 3 metrics *New??*
-----------------------
+Demo 3 metrics
+--------------
 
 .. image:: images/console-demo3-partial-metrics.png
    :width: 60%
@@ -626,12 +598,6 @@ Using Kafka Connect
    :width: 100%
 
 
-Apache Kafka Connectors
------------------------
-
-These make it easier to connect Kafka to databases, OpenSearch, etc., without
-needing to write Python (or whatever) code.
-
 How I would do it
 -----------------
 
@@ -671,38 +637,6 @@ the others, if they go below a threshold, adds a standard quantity back in
 .. This last is why the slightly icky "setting a boolean flag" trick isn't so
    bad, as it is sort of simulating what we are doing above. It would be worth
    explaining this, at this point
-
-Start of day
-------------
-
-*Maybe drop*
-
-.. raw:: pdf
-
-   Spacer 0 10
-
-.. image:: images/homework-redis-1.svg
-   :width: 70%
-
-Cod and chips
--------------
-
-*Maybe drop*
-
-.. raw:: pdf
-
-   Spacer 0 10
-
-.. image:: images/homework-redis-2.svg
-   :width: 100%
-
-Plaice and chips
-----------------
-
-*Maybe drop*
-
-.. image:: images/homework-redis-3.svg
-   :width: 90%
 
 Final summary
 -------------
