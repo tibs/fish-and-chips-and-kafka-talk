@@ -75,8 +75,8 @@ For me, running the first demo against my Kafka service at
 How to run the demos with Aiven
 ===============================
 
-You don't need to run the demos using Aiven services, but it's the simplest
-option for me, so it's what I'm showing here.
+You don't need to run the demos using Aiven services, but I think it's the
+easiest option if you don't already have Kafka up and running.
 
 Get an account
 --------------
