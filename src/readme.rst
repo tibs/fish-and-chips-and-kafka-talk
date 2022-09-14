@@ -149,10 +149,11 @@ Now it's time to create the actual Kafka service, using the command below.
 The service name needs to be unique and can't be changed - I like to put my
 name in it (for instance, ``tibs-kafka-fish``).
 
-The extra ``-c`` switches enable the REST API to the service, the ability to
-create new topics by publishing to them (very useful), and use of the schema
+The extra ``-c`` switches enable the REST API to the service (used to get some
+of the information available in the web console), the ability to create new
+topics by publishing to them (we definitely want this), and use of the schema
 registry (which we actually don't need in this demo, but it doesn't cost extra
-and it often useful).
+and is often useful).
 
 Again, remember to replace ``KAFKA_FISH_DEMO`` with your actual service name,
 and ``CLOUD_NAME`` with the cloud name:
@@ -182,8 +183,8 @@ It takes a little while for a service to start up. You can wait for it using:
 
    avn service wait KAFKA_FISH_DEMO
 
-which will update you on the progress of the service, and exit when it is
-``RUNNING``.
+which will update you on the progress of the service, and exit when the
+service is ``RUNNING``.
 
 Download certificates
 ---------------------
