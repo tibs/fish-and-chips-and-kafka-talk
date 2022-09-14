@@ -110,9 +110,9 @@ them with:
    avn project list
 
 Choose the project you want to use with the following command, replacing
-``PROJECT-NAME`` with the appropriate name.
+``PROJECT-NAME`` with the appropriate name:
 
-.. code: shell
+.. code:: shell
 
   avn project switch PROJECT_NAME
 
