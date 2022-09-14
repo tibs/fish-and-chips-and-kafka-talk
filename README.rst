@@ -23,8 +23,7 @@ on `6th September 2022`_.
 Useful links
 ~~~~~~~~~~~~
 
-These are the links mentioned in the slides, and also some other links that
-may be of interest.
+First, the links mentioned in the slides:
 
 * Aiven_, where I work, and our developer documentation at
   https://docs.aiven.io/ and https://github.com/aiven/devportal
@@ -32,10 +31,21 @@ may be of interest.
 * Aiven is hiring (at least as of September 2022, and probably for a good
   while longer). See https://aiven.io/careers
 
-and also:
+The Kafka libraries used in the demos:
 
-* My Aiven blog post `Get things done with the Aiven CLI`_, which introduces
-  the Aiven command line tool.
+* `kafka-python`_, which is a very good translation of the standard Java API to Python
+* `aiokafka`_, which provides asynchronous access to Kafka from Python. It's
+  not as fully featured as `kafka-python`_, but there's nothing stopping you
+  from using both of them together.
+
+For the terminal user interface I used in the demos, see Textual_ and Rich_.
+
+.. _`kafka-python`: https://github.com/dpkp/kafka-python
+.. _`aiokafka`: https://github.com/aio-libs/aiokafka
+.. _Textual: https://github.com/Textualize/textual
+.. _Rich: https://github.com/Textualize/rich
+
+The following may also be of interest:
 
 * `Apache Kafka® simply explained`_ on the Aiven blog, for a friendly
   explanation of the Apache Kafka fundamentals
@@ -54,11 +64,6 @@ and also:
    https://aiven.io/blog/teach-yourself-apache-kafka-and-python-with-a-jupyter-notebook
 .. _`Create a JDBC sink connector:
    https://docs.aiven.io/docs/products/kafka/kafka-connect/howto/jdbc-sink.html
-
-For the terminal user interface I used in the demos, see Textual_ and Rich_.
-
-.. _Textual: https://github.com/Textualize/textual
-.. _Rich: https://github.com/Textualize/rich
 
 Not used in the demos, but another interesting Kafka library for Python is
 faust_, which provides *Kafka Streams*, allowing (for instance) merging of
