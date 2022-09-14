@@ -33,6 +33,9 @@ may be of interest.
 
 and also:
 
+* My Aiven blog post `Get things done with the Aiven CLI`_, which introduces
+  the Aiven command line tool.
+
 * `Apache Kafka® simply explained`_ on the Aiven blog, for a friendly
   explanation of the Apache Kafka fundamentals
 
@@ -51,7 +54,7 @@ and also:
 .. _`Create a JDBC sink connector:
    https://docs.aiven.io/docs/products/kafka/kafka-connect/howto/jdbc-sink.html
 
-For the terminal user interface, is used Textual_ and Rich_.
+For the terminal user interface I used in the demos, see Textual_ and Rich_.
 
 .. _Textual: https://github.com/Textualize/textual
 .. _Rich: https://github.com/Textualize/rich
@@ -65,7 +68,6 @@ events from multiple Kafka topics.
 Lastly, but definitely not least, `The Log: What every software engineer
 should know about real-time data's unifying abstraction`_ is the 2013 paper by
 Jay Kreps that explains the concepts behind Kafka. It is very worth a read.
-
 
 .. _`The Log: What every software engineer should know about real-time data's unifying abstraction`:
    https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying
