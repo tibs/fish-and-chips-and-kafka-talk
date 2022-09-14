@@ -2,154 +2,266 @@
 Demo for "Fish and Chips and Apache Kafka®" talk
 ================================================
 
-*Why no, it's not even remotely ready yet!*
+.. contents::
 
-Plan:
+What we have here
+=================
 
-* Demo 1 - simplest demo
-* Demo 2 - adds extra tills
-* Demo 3 - adds extra preparers
-* Demo 4 - based on 1, adds the cook
-* Demo 5 - (not started) based on 1, adds data going to PG and analysis
+Some "proof of concept" code:
 
-Also, in theory
+* `<poc1.py>`_ - example code showing how to create a Kafka producer using
+  <``python-kafka``, and send some messages.
+* `<poc2.py>`_ - the same thing, but using ``aiokafka`` to do it asynchronously.
+* `<poc3.py>`_ - me working out how to do Kafka producer and consumer in a
+  Textual app.
 
-* Demo 6 - (homework! - doesn't exist) based on 5, uses Redis to model the hot cabinet
-* Demo 7 - (also doesn't exist) pulls all the others into one single demo
+The demo programs as show in the talk:
 
-ToDo list:
+* `<demo1-cod-and-chips.py>`_ - a till sending orders to a topic, and a food
+  preparer consuming them.
+* `<demo2-cod-and-chips-3tills.py>`_ - three tills, but still only one preparer,
+  who can't keep up.
+* `<demo3-cod-and-chips-3tills-2preparers.py>`_ - three tills and two preparers,
+  who can keep up.
+* `<demo4-with-added-cook.py>`_ - back to one till and one food preparer, but
+  now we have a cook to prepare plaice for us.
 
-* Write demo 5
-* Write more comments and some discussion of how the code for a demo is
-  different that that from the previous demo
-* Do something more useful to set the variables (Kafka URI, etc.) the code
-  needs - this becomes important when PG and Kafka Connect get used
-* Make the "generate orders" code produce a sequence of orders that the TILLs
-  can consume in common - so as if the customer enters the shop and goes to
-  the next available till. Perhaps make it its own widget so we can see the
-  number of customers waiting.
-* Check the handling of partitions and whether it's a python-kafka/aiokafka
-  thing
-* Make this readme actually useful
+and
 
-.. _`get the partitions`:
-   https://kafka-python.readthedocs.io/en/master/apidoc/KafkaConsumer.html#kafka.KafkaConsumer.partitions_for_topic
-.. _`get the end offset`:
-   https://kafka-python.readthedocs.io/en/master/apidoc/KafkaConsumer.html#kafka.KafkaConsumer.end_offsets
-.. _`seek`:
-   https://kafka-python.readthedocs.io/en/master/apidoc/KafkaConsumer.html#kafka.KafkaConsumer.seek
-.. _`seek_to_end`:
-   https://kafka-python.readthedocs.io/en/master/apidoc/KafkaConsumer.html#kafka.KafkaConsumer.seek_to_end
+* `<demo_helpers.py>`_ which has common code for the above.
+
+Known problems:
+
+* If you make the terminal window narrow enough that the text in panels has to
+  wrap, then the panels won't display all the lines. My code is counting
+  logical lines, not display lines.
 
 Dependencies
 ============
 
 I use poetry_ to manage the dependencies needed by this demo.
 
-Thus::
+.. _poetry: https://python-poetry.org/
 
-  poetry shell
+So, for instance, in this directory I would start a new ``poetry`` shell using::
 
-to start a new virtual environment, and then::
+  $ poetry shell
 
-  poetry install
+and then install the dependencies using::
 
-to set it up with the necessary dependencies.
+  $ poetry install
+
+If you wish, you can exit the ``poetry`` shell using ``exit``.
 
 .. _poetry: https://python-poetry.org/
 
+How to run the demos
+====================
 
-Aiven service management
-========================
+Assuming you have a Kafka service, and the SSL credentials for connecting to
+it are in the ``creds`` directory, then you can run each demo with:
 
-*I'm noting what I did. You'll need to replace parts of it with your own
-information, and in particular what cloud/region you want to use.*
+.. code:: shell
 
-Logging in
-==========
+   ./DEMO_FILE HOST_URL:SSL_PORT -d creds
 
-If you don't yet have an Aiven account, you can sign up for a free trial at
-https://console.aiven.io/signup/email
+For me, running the first demo agains my Kafka service at
+``tibs-kafka-fish-dev-sandbox.aivencloud.com:12693``, I would use:
 
-I logged in using the instructions documented for the `Aiven CLI`_, using
-a token:
+.. code:: shell
+
+   ./demo1-cod-and-chips.py tibs-kafka-fish-dev-sandbox.aivencloud.com:12693 -d creds
+
+How to run the demos with Aiven
+===============================
+
+You don't need to run the demos using Aiven services, but it's the simplest
+option for me, so it's what I'm showing here.
+
+Get an account
+--------------
+
+If you don't yet have an Aiven account, you can `sign up for a free trial`_
+
+.. _`sign up for a free trial`: https://console.aiven.io/signup/email
+.. _`Create an authentication token`: https://docs.aiven.io/docs/platform/howto/create_authentication_token.html
+
+Log in to Aiven
+---------------
+
+Get an authentication token, as described at `Create an authentication token`_,
+copy it, and log in using the following command. You'll need to replace
+YOUR-EMAIL-ADDRESS with the email address you've registered with Aiven:
+
+.. code:: shell
+
+  avn user login YOUR-EMAIL-ADDRESS --token
+
+This will prompt you to paste in your token.
+
+Choose a project, cloud and service plan
+----------------------------------------
+
+Aiven uses "projects" to organise which services you can access. You can list
+them with:
+
+.. code:: shell
+
+   avn project list
+
+Choose the project you want to use with the following command, replacing
+``PROJECT-NAME`` with the appropriate name.
 
 .. code: shell
 
-  avn user login USER-EMAIL-ADDRESS --token
+  avn project switch PROJECT_NAME
 
-.. _`Aiven CLI`: https://docs.aiven.io/docs/tools/cli.html
+You then need to decide what cloud you want to run the service in. Use:
 
-and then did:
-
-.. code: shell
-
-  avn project switch $PROJECT_NAME
-
-I can list the available clouds with::
+.. code:: shell
 
   avn cloud list
 
-and the service plans within a cloud (here, ``google-europe-north1``, which is
-Finland):
+to find the clouds. Since Aiven is based out of Helsinki, I tend to choose
+``google-europe-north1``, which is Finland, but you'll want to make your own
+choice.
+
+Normally, you'd also want to decide on a service plan (which determines the
+number of servers, the memory, CPU and disk resources for the service). You
+can find the service plans for a cloud using:
 
 .. code: shell
 
-  avn service plans --service-type kafka --cloud google-europe-north1
+  avn service plans --service-type kafka --cloud CLOUD-NAME
 
-``kafka:startup-2`` is the cheapest.
+However, for the these demo programs a ``kafka:startup-2`` plan is sufficient,
+and that's also the cheapest.
 
-Create my Aiven for Apache Kafka® service
-=========================================
+  **Note** that if you want to use Kafka Connect with your Kafka service,
+  you'll need something more powerful than the startup plan, for instance
+  ``business-4``.
 
-I followed the instructions for `avn service create`_ and created my new
-service (the name needs to be unique and can't be changed - I like to put my
-name in it). The extra ``-c`` switches enable the REST API to the service, the
-ability to create new topics by publishing to them (very useful), use of the
-schema registry (which we actually don't need in this demo)
+Create a Kafka service
+----------------------
+
+Now it's time to create the actual Kafka service, using the command below.
+
+The service name needs to be unique and can't be changed - I like to put my
+name in it (for instance, ``tibs-kafka-fish``).
+
+The extra ``-c`` switches enable the REST API to the service, the ability to
+create new topics by publishing to them (very useful), use of the schema
+registry (which we actually don't need in this demo).
+
+Again, remember to replace ``KAFKA_FISH_DEMO`` with your actual service name,
+and ``CLOUD_NAME`` with the cloud name:
 
 .. code: shell
 
-  avn service create $KAFKA_NAME \
+  avn service create KAFKA_FISH_DEMO \
       --service-type kafka \
-      --cloud google-europe-north1 \
+      --cloud CLOUD-NAME \
       --plan startup-2 \
       -c kafka_rest=true \
       -c kafka.auto_create_topics_enable=true \
       -c schema_registry=true
 
-.. _`avn service create`: https://docs.aiven.io/docs/tools/cli/service.html#avn-service-create
+  **Note** If you did want Kafka Connect support then you also need to specify
+  ``-c kafka_connect=true`` - remember that won't work with a "startup" plan.
 
-**Note** If I later want Kafka Connect support (``-c kafka_connect=true``)
-then I need to use a more capable plan, for instance ``business-4``
+  **Note** If you're using an existing account which has VPCs in the region
+  you've chosen, then you also need to specify ``--no-project-vpc`` to
+  guarantee that you don't use the VPC.
 
-**Note** If there are VPCs in the region I've chosen, then I also need to
-specify ``--no-project-vpc`` to guarantee that I don't use the VPC.
+It takes a little while for a service to start up. You can wait for it using:
 
-Get the certificates:
+.. code:: shell
+
+   avn service wait KAFKA_FISH_DEMO
+
+which will update you on the progress of the service, and exit when it is
+``RUNNING``.
+
+Download certificates
+---------------------
+
+In order to let the demo programs talk to the Kafka service, you need to
+download the appropriate certificate files. Create a directory to put them
+into:
 
 .. code:: shell
 
   mkdir -p creds
-  avn service user-creds-download $KAFKA_NAME --project $PROJECT_NAME -d creds --username avnadmin
 
-**Note** the following are in no way in logical order or anything
+and then download them:
 
 .. code:: shell
 
-   avn service update $KAFKA_SERVICE --power-off  # when not using
+  avn service user-creds-download KAFKA_FISH_DEMO -d creds --username avnadmin
 
-   avn service update $KAFKA_SERVICE --power-on   # to start again
-   avn service wait $KAFKA_NAME                   # wait for it to be ready
+Get the connection information
+------------------------------
 
+You can get the connection information by going service's page on the `Aiven
+web console`_. The "Overview" tab for your service lists the ``SERVICE_URI``,
+which combines the ``HOST_URL`` and ``SSL_PORT`` information that you need.
+
+But it's simpler to do it at the command line:
+
+.. code:: shell
+
+   avn service get KAFKA_FISH_DEMO --format '{service_uri}'
+
+.. _`Aiven web console`: https://console.aiven.io/
+
+*And now you're ready to run the demo programs*
+
+After you're done
+-----------------
+
+If you're not using your Kafka service for a while, and don't mind losing any
+data in its event stream, then it makes sense to power it off, as you don't
+get charged (real money or free trial credits) when a service is powered off.
+
+You can power off the service (remember, this will discard all your data) with:
+
+.. code:: shell
+
+   avn service update $KAFKA_SERVICE --power-off
+
+and bring it back again with:
+
+.. code:: shell
+
+   avn service update $KAFKA_SERVICE --power-on
+
+This will take a little while to finish, so wait for it with:
+
+.. code:: shell
+
+   avn service wait KAFKA_FISH_DEMO
+
+If you've entirely finished using the Kafka service, you can delete it with:
+
+.. code:: shell
+
+   avn service terminate KAFKA_FISH_DEMO
 
 Other resources
 ===============
 
 You may also be interested in
-https://github.com/aiven/python-notebooks-for-apache-kafka,
-which is a series of Jupyter Notebooks on how to start with Apache Kafka® and
-Python, using Aiven managed services.
+
+* My Aiven blog post `Get things done with the Aiven CLI`_
+* The Aiven github repository `Python Jupyter Notebooks for Apache Kafka®`_
+  which is a series of Jupyter Notebooks on how to start with Apache Kafka®
+  and Python, using Aiven managed services.
+* The `Aiven for Apache Kafka®`_ section of the `Aiven developer documentation`_
+
+.. _`Get things done with the Aiven CLI`: https://aiven.io/blog/aiven-cmdline
+.. _`Python Jupyter Notebooks for Apache Kafka®`: https://github.com/aiven/python-notebooks-for-apache-kafka
+.. _`Aiven for Apache Kafka®`: https://docs.aiven.io/docs/products/kafka.html
+.. _`Aiven developer documentation`: https://docs.aiven.io/index.html
 
 ------
 
