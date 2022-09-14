@@ -10,7 +10,7 @@ What we have here
 Some "proof of concept" code:
 
 * `<poc1.py>`_ - example code showing how to create a Kafka producer using
-  <``python-kafka``, and send some messages.
+  ``python-kafka``, and send some messages.
 * `<poc2.py>`_ - the same thing, but using ``aiokafka`` to do it asynchronously.
 * `<poc3.py>`_ - me working out how to do Kafka producer and consumer in a
   Textual app.
