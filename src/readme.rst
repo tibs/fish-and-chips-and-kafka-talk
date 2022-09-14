@@ -195,7 +195,7 @@ into:
 
 .. code:: shell
 
-  mkdir -p creds
+  mkdir creds
 
 and then download them:
 
