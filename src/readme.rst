@@ -130,7 +130,7 @@ Normally, you'd also want to decide on a service plan (which determines the
 number of servers, the memory, CPU and disk resources for the service). You
 can find the service plans for a cloud using:
 
-.. code: shell
+.. code:: shell
 
   avn service plans --service-type kafka --cloud CLOUD-NAME
 
@@ -156,7 +156,7 @@ registry (which we actually don't need in this demo).
 Again, remember to replace ``KAFKA_FISH_DEMO`` with your actual service name,
 and ``CLOUD_NAME`` with the cloud name:
 
-.. code: shell
+.. code:: shell
 
   avn service create KAFKA_FISH_DEMO \
       --service-type kafka \
