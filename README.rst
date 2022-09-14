@@ -78,6 +78,16 @@ Jay Kreps that explains the concepts behind Kafka. It is very worth a read.
 .. _`The Log: What every software engineer should know about real-time data's unifying abstraction`:
    https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying
 
+The demos
+~~~~~~~~~
+
+The source code for the demonstration programs is in the `src <src/>`_ directory. See
+the `readme.rst <src/readme.rst>`_ for how to run them.
+
+The videos of the demos (which I use during the talk) are in a separate
+repository, at https://github.com/tibs/fish-and-chips-and-kafka-videos (it
+seems unfair to make you download them from here if you're not interested).
+
 The slides
 ~~~~~~~~~~
 
@@ -101,16 +111,6 @@ The QR code on the final slide was generated using the command line program
 for qrencode_, which I installed with ``brew install qrencode`` on my Mac.
 
 .. _qrencode: https://fukuchi.org/works/qrencode/
-
-The demos
-~~~~~~~~~
-
-The source code for the demonstration programs is in the `src <src/>`_ directory. See
-the `readme.rst <src/readme.rst>`_ for how to run them.
-
-The videos of the demos (which I use during the talk) are in a separate
-repository, at https://github.com/tibs/fish-and-chips-and-kafka-videos (it
-seems unfair to make you download them from here if you're not interested).
 
 ..
    The slide notes
