@@ -306,7 +306,7 @@ You may also be interested in
   Attribution-ShareAlike 4.0 International License`_. Choose whichever seems
   most appropriate for your use.
 
-.. |cc-attr-sharealike| image:: images/cc-attribution-sharealike-88x31.png
+.. |cc-attr-sharealike| image:: ../images/cc-attribution-sharealike-88x31.png
    :alt: CC-Attribution-ShareAlike image
 
 .. _`Creative Commons Attribution-ShareAlike 4.0 International License`: http://creativecommons.org/licenses/by-sa/4.0/
