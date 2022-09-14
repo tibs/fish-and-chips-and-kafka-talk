@@ -4,13 +4,6 @@ Fish and Chips and Apache Kafka®
 
 A talk entitled "Fish and Chips and Apache Kafka®"
 
-.. ------------------------------------------
-
-*The slides are nearly there, the demo programs work, but I've yet to update
-the readme for the demos.*
-
-.. ------------------------------------------
-
 This is a talk for presentation at `PyCon UK 2022`_,
 16th - 18th September 2022.
 
@@ -20,16 +13,12 @@ will update this README with a link when it is available.
 It was also presented beforehand as a live talk at CamPUG_
 on `6th September 2022`_.
 
-  *Note to anyone visiting after CamPUG: I'm still working on the slides
-  and other materials, so things are not necessarily stable. The tag* `CamPUG`
-  *should give you the slides as presented at CamPUG.*
+  *Note to anyone visiting after CamPUG: The tag* `CamPUG` *should give you
+  the slides as presented at CamPUG.*
 
 .. _`PyCon UK 2022`: https://2022.pyconuk.org/
 .. _CamPUG: https://www.meetup.com/CamPUG/
 .. _`6th September 2022`: https://www.meetup.com/campug/events/288163944/
-
-  *Apache Kafka is either a registered trademark or a trademark of the Apache
-  Software Foundation in the United States and/or other countries*
 
 Useful links
 ~~~~~~~~~~~~
@@ -105,16 +94,15 @@ for qrencode_, which I installed with ``brew install qrencode`` on my Mac.
 
 .. _qrencode: https://fukuchi.org/works/qrencode/
 
-The demo
-~~~~~~~~
+The demos
+~~~~~~~~~
 
-The source code for the demonstration program is in the `src <src/>`_ directory. See
-the `readme.rst <src/readme.rst>`_ for how to run it.
+The source code for the demonstration programs is in the `src <src/>`_ directory. See
+the `readme.rst <src/readme.rst>`_ for how to run them.
 
 The videos of the demos (which I use during the talk) are in a separate
 repository, at https://github.com/tibs/fish-and-chips-and-kafka-videos (it
 seems unfair to make you download them from here if you're not interested).
-
 
 ..
    The slide notes
@@ -172,6 +160,9 @@ If you wish, you can exit the ``poetry`` shell using ``exit``.
 .. _reStructuredText: http://docutils.sourceforge.net/rst.html
 
 --------
+
+Acknowledgements
+~~~~~~~~~~~~~~~~
 
 Apache,
 Apache Kafka,
