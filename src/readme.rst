@@ -281,6 +281,44 @@ If you've entirely finished using the Kafka service, you can delete it with:
 
    avn service terminate KAFKA_FISH_DEMO
 
+Future things to do
+===================
+
+Homework projects suggested in the talk:
+
+1. Use a JDBC Kafka Connector to send orders from the main topic to a
+   PostgreSQL® database, and then add a widget to the demo that queries that
+   database periodically and updates a panel with some summary information
+   (perhaps as simple as the total count of cod, chip and plaice orders).
+
+2. Use a Redis® cache to simulate the cook preparing food for the hot cabinet.
+   There's a brief summary in the slides. For extra credit, also have the cook
+   "wake up" periodically to check if they need to cook more cod or chips to
+   keep the amount in the hot cabinet at the right level.
+
+Let me know if you play with these ideas!
+
+Other ideas:
+
+* Fix the problem where I'm counting logical lines in the panels, and not
+  lines as displayed. I just didn't have time to do this.
+
+* Make a proper generator for customer orders - if you will, a queue of
+  customers. Each till would then ask for the next customer to "come forward"
+  and present its order, rather than asking for an order directly from the
+  order generator. This in turn would allow having a panel to show the current
+  customer queue, which would help visualise the incoming flow of orders.
+
+I also want to work out why I had some problems with sending to all the
+partitions (in demo 3) without actually specifying the partition number. I've
+been given the hint to research "sticky partitioning".
+
+I'm also interested why it's only in demo 3 that I have to worry about making
+the producers wait for the consumers to be ready.
+
+And, of course, there's much more to learn about Apache Kafka®, and also about
+Textualize and Rich.
+
 Other resources
 ===============
 
@@ -298,6 +336,8 @@ You may also be interested in
 .. _`Aiven developer documentation`: https://docs.aiven.io/index.html
 
 ------
+
+For acknowledgements of product names, see the toplevel `README <README.rst>`_.
 
   |cc-attr-sharealike|
 
