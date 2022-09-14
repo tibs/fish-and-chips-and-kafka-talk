@@ -65,7 +65,7 @@ it are in the ``creds`` directory, then you can run each demo with:
 
    ./DEMO_FILE HOST_URL:SSL_PORT -d creds
 
-For me, running the first demo agains my Kafka service at
+For me, running the first demo against my Kafka service at
 ``tibs-kafka-fish-dev-sandbox.aivencloud.com:12693``, I would use:
 
 .. code:: shell
@@ -202,19 +202,49 @@ and then download them:
 Get the connection information
 ------------------------------
 
-You can get the connection information by going service's page on the `Aiven
-web console`_. The "Overview" tab for your service lists the ``SERVICE_URI``,
-which combines the ``HOST_URL`` and ``SSL_PORT`` information that you need.
-
-But it's simpler to do it at the command line:
+To connect to the Kafka service, you need its service URI. You can find that
+out with:
 
 .. code:: shell
 
    avn service get KAFKA_FISH_DEMO --format '{service_uri}'
 
-.. _`Aiven web console`: https://console.aiven.io/
+Run a demo
+----------
 
 *And now you're ready to run the demo programs*
+
+    This is the same information as at `How to run the demos`_ earlier in this
+    README, put here so you don't need to scroll all the way to the top again.
+
+Given the service URI you found using ``avn service get`` (just above here),
+and assuming you saved the credentials to a directory called ``creds``, then
+run a demo with:
+
+.. code:: shell
+
+   ./DEMO_FILE SERVICE_URI -d creds
+
+For me, running the first demo against my Kafka service at
+``tibs-kafka-fish-dev-sandbox.aivencloud.com:12693``, I would use:
+
+.. code:: shell
+
+   ./demo1-cod-and-chips.py tibs-kafka-fish-dev-sandbox.aivencloud.com:12693 -d creds
+
+Exploring your service
+----------------------
+
+To find out more information about a Kafka topic, look at the documentation
+for `avn service topic`_.
+
+.. _`avn service topic`: https://docs.aiven.io/docs/tools/cli/service/topic.html
+
+You can also find useful information about a service using the `Aiven web
+console`_, on the **Services** page for your Kafka service.
+
+.. _`Aiven web console`: https://console.aiven.io/
+
 
 After you're done
 -----------------
