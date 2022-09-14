@@ -327,18 +327,6 @@ Three tills, 3 partitions, 1 food preparer
 .. but now the food producer is too busy
 
 
-Demo 2 partitions sizes
------------------------
-
-.. image:: images/console-demo2-size-table.png
-   :width: 100%
-
-Demo 2 partition barchart
--------------------------
-
-.. image:: images/console-demo2-size-barchart.png
-   :width: 100%
-
 Add multiple *consumers*
 ------------------------
 
@@ -407,14 +395,22 @@ Show demo: multiple TILLs and PREPARERS
 
 Three tills, 3 partitions, 2 food preparers
 
-Demo 3 partitions sizes *Maybe*
--------------------------------
+Web console
+-----------
+
+.. When the image fits the (default) page, it's rather too small to be useful
+
+.. image:: images/console-overview.png
+   :width: 90%
+
+Topics in the web console
+-------------------------
 
 .. image:: images/console-demo3-size-table.png
    :width: 100%
 
-Demo 3 partition barchart *Maybe*
----------------------------------
+Demo 3 partition barchart
+-------------------------
 
 .. image:: images/console-demo3-size-barchart.png
    :width: 100%
@@ -429,8 +425,10 @@ Demo 3 metrics
 --------------
 
 .. image:: images/console-demo3-partial-metrics.png
-   :width: 60%
+   :width: 100%
 
+Showing CPU usage, but there's also disk space usage, disk iops (read and write), 5
+minute load average, memory usage, and network receive/transmit
 
 Cod or plaice
 -------------
@@ -624,15 +622,19 @@ Redis has entries for the hot cabinet content, keyed by ``cod``, (portions of)
 Using the cache
 ---------------
 
-PREPARER compares the order to the counts in the cache. If there's enough
-"stuff" to make the order up, decrements the cache appropriately, and that's
-done
+PREPARER compares the order to the counts in the (hot cabinet) cache.
 
-If not, sends the order to the COOK
+* If there's enough, decrement the cache appropriately, order's done
 
-COOK updates the cache - for ``plaice``, adds as many as are needed, for
-the others, if they go below a threshold, adds a standard quantity back in
-("cooking in batches"). Then sends the order back to the [ORDER] topic
+* If not, sends the order to the COOK
+
+COOK updates the cache
+
+* For ``plaice``, adds as many as are needed
+
+* For ``cod`` and ``chips``, cook enough to stock the hot cabinet
+
+* Then sends the order back to the [ORDER] topic
 
 .. This last is why the slightly icky "setting a boolean flag" trick isn't so
    bad, as it is sort of simulating what we are doing above. It would be worth
