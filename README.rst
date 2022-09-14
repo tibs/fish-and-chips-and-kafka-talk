@@ -29,7 +29,8 @@ may be of interest.
 * Aiven_, where I work, and our developer documentation at
   https://docs.aiven.io/ and https://github.com/aiven/devportal
 * Get a free trial of Aiven services at https://console.aiven.io/signup/email
-* Aiven is hiring. See https://aiven.io/careers
+* Aiven is hiring (at least as of September 2022, and probably for a good
+  while longer). See https://aiven.io/careers
 
 and also:
 
