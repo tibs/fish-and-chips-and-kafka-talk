@@ -150,8 +150,9 @@ The service name needs to be unique and can't be changed - I like to put my
 name in it (for instance, ``tibs-kafka-fish``).
 
 The extra ``-c`` switches enable the REST API to the service, the ability to
-create new topics by publishing to them (very useful), use of the schema
-registry (which we actually don't need in this demo).
+create new topics by publishing to them (very useful), and use of the schema
+registry (which we actually don't need in this demo, but it doesn't cost extra
+and it often useful).
 
 Again, remember to replace ``KAFKA_FISH_DEMO`` with your actual service name,
 and ``CLOUD_NAME`` with the cloud name:
@@ -165,6 +166,8 @@ and ``CLOUD_NAME`` with the cloud name:
       -c kafka_rest=true \
       -c kafka.auto_create_topics_enable=true \
       -c schema_registry=true
+
+.. comment to unindent us
 
   **Note** If you did want Kafka Connect support then you also need to specify
   ``-c kafka_connect=true`` - remember that won't work with a "startup" plan.
