@@ -7,8 +7,7 @@ A talk entitled "Fish and Chips and Apache Kafka®"
 This is a talk for presentation at `PyCon UK 2022`_,
 16th - 18th September 2022.
 
-It will be presented live, but I expect a video to be made of the session, and
-will update this README with a link when it is available.
+It was presented live, and a `video recording`_ is available.
 
 It was also presented beforehand as a live talk at CamPUG_
 on `6th September 2022`_.
@@ -19,6 +18,7 @@ on `6th September 2022`_.
 .. _`PyCon UK 2022`: https://2022.pyconuk.org/
 .. _CamPUG: https://www.meetup.com/CamPUG/
 .. _`6th September 2022`: https://www.meetup.com/campug/events/288163944/
+.. _`video recording`: https://www.youtube.com/watch?v=uFUjnpCJ7xI
 
 Useful links
 ~~~~~~~~~~~~
