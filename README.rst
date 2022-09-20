@@ -9,8 +9,8 @@ This is a talk for presentation at `PyCon UK 2022`_,
 
 It was presented live, and a `video recording`_ is available.
 
-It was also presented beforehand as a live talk at CamPUG_
-on `6th September 2022`_.
+It was also presented beforehand (virtually) at CamPUG_ on `6th September
+2022`_.
 
   *Note to anyone visiting after CamPUG: The tag* `CamPUG` *should give you
   the slides as presented at CamPUG.*
