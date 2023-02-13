@@ -62,7 +62,7 @@ The following may also be of interest:
 .. _`Apache Kafka® simply explained`: https://aiven.io/blog/kafka-simply-explained
 .. _`Teach yourself Apache Kafka® and Python with a Jupyter notebook`:
    https://aiven.io/blog/teach-yourself-apache-kafka-and-python-with-a-jupyter-notebook
-.. _`Create a JDBC sink connector:
+.. _`Create a JDBC sink connector`:
    https://docs.aiven.io/docs/products/kafka/kafka-connect/howto/jdbc-sink.html
 
 Not used in the demos, but another interesting Kafka library for Python is
