@@ -101,7 +101,7 @@ albeit using their own styling (which is occasionally a bit odd). If you want
 to see the original reStructuredText source, you have to click on the "Raw"
 link at the top of the file's page.
 
-The PDF slides at 16x9 aspect ratio (`<rst-slides-16x9.pdf>`_) are stored here
+The PDF slides at 16x9 aspect ratio (`<slides-16x9.pdf>`_) are stored here
 for convenience.
 
 The PDF files may not always be as up-to-date as the source files, so check
